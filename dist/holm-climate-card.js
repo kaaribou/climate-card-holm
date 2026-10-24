@@ -21,15 +21,243 @@
  */
 (() => {
   const VERSION = "1.4.0";
-  const MODE_META = {
-    off: { icon: "mdi:power", rgb: "150,160,178", label: "Éteint" },
-    heat: { icon: "mdi:fire", rgb: "255,128,48", label: "Chauffe" },
-    cool: { icon: "mdi:snowflake", rgb: "64,190,255", label: "Clim" },
-    heat_cool: { icon: "mdi:sun-snowflake-variant", rgb: "185,139,255", label: "Auto" },
-    auto: { icon: "mdi:thermostat-auto", rgb: "185,139,255", label: "Auto" },
-    dry: { icon: "mdi:water-percent", rgb: "45,217,196", label: "Déshum." },
-    fan_only: { icon: "mdi:fan", rgb: "45,212,160", label: "Ventil." },
+  // ---------- textes (fr = comportement d'origine, langue choisie d'après Home Assistant) ----------
+  const I18N = {
+    fr: {
+      dec: ",",
+      mode_off: "Éteint", mode_heat: "Chauffe", mode_cool: "Clim", mode_heat_cool: "Auto", mode_auto: "Auto", mode_dry: "Déshum.", mode_fan_only: "Ventil.",
+      act_heating: "Chauffe", act_cooling: "Refroidit", act_drying: "Déshumidifie", act_fan: "Ventile", act_idle: "En veille", act_off: "Éteint", act_preheating: "Préchauffe", act_defrosting: "Dégivrage",
+      fan_auto: "Auto", fan_quiet: "Silence", fan_low: "Faible", fan_medium: "Moyen", fan_high: "Fort", fan_off: "Arrêt",
+      preset_none: "Normal", preset_boost: "Boost", preset_away: "Absent", preset_eco: "Éco", preset_comfort: "Confort", preset_sleep: "Nuit", preset_home: "Maison",
+      preset_activity: "Activité", preset_frost: "Hors-gel", preset_power: "Délestage", preset_safety: "Sécurité", preset_security: "Sécurité",
+      swing_off: "Fixe", swing_stop: "Fixe", swing_on: "Oscille", swing_swing: "Oscille", swing_windnice: "Confort", swing_vertical: "Vertical", swing_horizontal: "Horiz.", swing_both: "Les deux",
+      rs_window: "fenêtre ouverte", rs_ass: "auto-start/stop", rs_sleep: "veille", rs_safety: "sécurité", rs_central: "mode central", rs_inhibition: "inhibé",
+      rs_fan_ass: "ventilation (auto-start/stop)", rs_dry_ass: "déshumidification (auto-start/stop)",
+      msg_safety_detected: "Mode sécurité : la sonde de température ne répond plus",
+      msg_overpowering_detected: "Délestage : puissance maximale atteinte",
+      msg_hvac_off_manual: "Éteint manuellement",
+      msg_hvac_off_auto_start_stop: "Éteint par l'auto-start/stop",
+      msg_hvac_off_window_detection: "Éteint par la détection d'ouverture",
+      msg_hvac_off_sleep_mode: "Éteint par le mode veille",
+      msg_hvac_off_safety_detection: "Éteint par le mode sécurité",
+      msg_hvac_off_central_mode: "Éteint par le mode central",
+      msg_hvac_off_inhibition: "Thermostat inhibé : commande des appareils suspendue",
+      msg_hvac_fan_only_auto_start_stop: "Ventilation seule par l'auto-start/stop",
+      msg_hvac_dry_auto_start_stop: "Déshumidification par l'auto-start/stop",
+      msg_target_temp_window_eco: "Consigne abaissée : fenêtre ouverte (éco)",
+      msg_target_temp_window_frost: "Consigne abaissée : fenêtre ouverte (hors-gel)",
+      msg_target_temp_power: "Consigne abaissée : délestage",
+      msg_target_temp_central_mode: "Consigne imposée par le mode central",
+      msg_target_temp_activity_detected: "Consigne : activité détectée",
+      msg_target_temp_activity_not_detected: "Consigne : pas d'activité dans la pièce",
+      msg_target_temp_absence_detected: "Consigne : absence détectée",
+      msg_target_temp_timed_preset: "Consigne : préréglage temporaire en cours",
+      msg_not_initialized: "Thermostat en cours d'initialisation",
+      msg_underlying_unavailable: "Un appareil piloté est indisponible",
+      err_entity: "Choisis une entité climate dans l'éditeur.",
+      history: "Historique de la température", setpoint: "Consigne", lower: "Baisser", raise: "Monter", close: "Fermer", unavailable: "Entité indisponible",
+      fan: "Ventilation", preset: "Préréglage", timed: "Préréglage temporaire", timer: "Minuteur", swing_v: "Oscillation verticale", swing_h: "Oscillation horizontale",
+      why: "Pourquoi cet état ?",
+      st_safety: "Sécurité · sonde muette", st_heat_fail: "Défaut de chauffe", st_cool_fail: "Défaut de refroidissement", st_inhibited: "Arrêté · inhibé",
+      st_overpower: "Délestage en cours", st_win_off: "Arrêté · fenêtre ouverte", st_win: "Fenêtre ouverte", st_stopped: "Arrêté · {0}", st_timed: "{0} · encore {1}",
+      p_safety: "Sécurité", p_safety_t: "Sonde de température muette : chauffe de sécurité",
+      p_overpower: "Délestage", p_overpower_t: "Puissance maximale atteinte : chauffage délesté",
+      p_fail: "Défaut", p_heat_fail_t: "Défaut de chauffage détecté : la température ne monte pas", p_cool_fail_t: "Défaut de refroidissement détecté",
+      p_inh_bypass: "Inhibition ignorée", p_inh_bypass_t: "Bypass de l'inhibition actif", p_inh_bypass_tap: "Bypass de l'inhibition actif — toucher pour le désactiver",
+      p_inh: "Inhibé", p_inh_t: "Commande des appareils suspendue", p_inh_tap: "Commande des appareils suspendue — toucher pour ignorer l'inhibition",
+      p_win_bypass: "Fenêtre ignorée", p_win_bypass_tap: "La détection d'ouverture est ignorée — toucher pour la rétablir",
+      p_win_open: "Fenêtre ouverte", p_win_open_tap: "Ouverture détectée : chauffage réduit ou coupé — toucher pour l'ignorer",
+      p_win_closed_tap: "Fenêtres fermées — toucher pour ignorer la détection d'ouverture",
+      p_ass_stop: "Arrêt auto", p_ass_stopped_t: "Arrêté par l'auto-start/stop", p_ass_on_t: "Auto-start/stop actif", p_ass_off_t: "Auto-start/stop désactivé",
+      p_tap_off: "{0} — toucher pour le désactiver", p_tap_on: "{0} — toucher pour l'activer",
+      p_present_t: "Présence détectée", p_away: "Absent", p_away_t: "Personne à la maison : consigne d'absence",
+      p_motion: "Mouvement", p_motion_t: "Mouvement détecté dans la pièce", p_no_motion_t: "Pas de mouvement",
+      p_locked: "Verrouillé", p_locked_t: "Thermostat verrouillé",
+      pw_heat: "Chauffe {0} %", pw_ext: "Ext. {0}°",
+      w_timed: "Préréglage temporaire en cours", w_remaining: "{0}, encore {1}", w_inh_bypass: "Bypass de l'inhibition activé", w_win_bypass: "Détection d'ouverture ignorée (bypass)",
+      w_heat_fail: "Défaut de chauffage détecté", w_heat_fail_sub: "La température ne monte pas malgré la chauffe", w_cool_fail: "Défaut de refroidissement détecté",
+      w_locked: "Thermostat verrouillé", w_recalc: "Appareil piloté en cours de mise à jour", w_none: "Aucune alerte",
+      w_off_sub: "Le thermostat est à l'arrêt.", w_ok_sub: "Le thermostat suit sa consigne normalement.",
+      tp_left: "<b>{0}</b> encore {1}", tp_then: " · puis {0}", tp_cancel: "Annuler", tp_for: "Pendant",
+      e_entity: "Entité climate", e_name: "Nom affiché", e_icon: "Icône (appareil éteint)", e_show_fan: "Ventilation", e_show_preset: "Préréglage (boost…)",
+      e_show_swing: "Oscillation", e_layout: "Présentation", e_min_temp: "Consigne minimum", e_max_temp: "Consigne maximum",
+      e_temperature_sensor: "Sonde de température (sinon celle de l'appareil)", e_graph_hours: "Durée du graphique par défaut",
+      e_badges: "Pastilles d'état (jusqu'à 4 entités : fenêtre, présence, humidité…)",
+      e_vtherm: "Fonctions Versatile Thermostat (fenêtre, présence, délestage, minuteur…)", e_vtherm_info: "Informations sous les commandes",
+      e_vtherm_inhibition_bypass: "Interrupteur de bypass de l'inhibition (plugin d'inhibition)", e_vtherm_auto_start_stop: "Interrupteur auto-start/stop (automatique si vide)",
+      e_layout_full: "Complète (avec la roue)", e_layout_compact: "Compacte (en largeur, sans la roue)",
+      e_info_heat: "Taux de chauffe (%)", e_info_power: "Puissance moyenne (W)", e_info_ext: "Température extérieure", e_info_bar: "Barre de chauffe",
+      g_temp: "Température", g_sensor: " · sonde", g_loading: "Chargement…", g_error: "Historique indisponible : {0}", g_nodata: "Aucune donnée de température sur cette période.",
+      g_current: "Actuelle", g_min: "Min", g_max: "Max", g_avg: "Moyenne", g_heat: "Chauffe", g_cool: "Clim", g_setpoint: "consigne {0}°",
+      g_hours: "{0} h", g_days: "{0} j", g_hour_axis: "{0}h",
+      card_desc: "Clim/chauffage compacte et animée selon l'usage (éteint, chauffage, clim), lisible à 2 côte à côte sur mobile.",
+    },
+    de: {
+      dec: ",",
+      mode_off: "Aus", mode_heat: "Heizen", mode_cool: "Kühlen", mode_heat_cool: "Auto", mode_auto: "Auto", mode_dry: "Entfeuchten", mode_fan_only: "Lüften",
+      act_heating: "Heizt", act_cooling: "Kühlt", act_drying: "Entfeuchtet", act_fan: "Lüftet", act_idle: "Leerlauf", act_off: "Aus", act_preheating: "Vorheizen", act_defrosting: "Abtauen",
+      fan_auto: "Auto", fan_quiet: "Leise", fan_low: "Niedrig", fan_medium: "Mittel", fan_high: "Hoch", fan_off: "Aus",
+      preset_none: "Normal", preset_boost: "Boost", preset_away: "Abwesend", preset_eco: "Eco", preset_comfort: "Komfort", preset_sleep: "Nacht", preset_home: "Zuhause",
+      preset_activity: "Aktivität", preset_frost: "Frostschutz", preset_power: "Lastabwurf", preset_safety: "Sicherheit", preset_security: "Sicherheit",
+      swing_off: "Fest", swing_stop: "Fest", swing_on: "Schwenken", swing_swing: "Schwenken", swing_windnice: "Komfort", swing_vertical: "Vertikal", swing_horizontal: "Horiz.", swing_both: "Beide",
+      rs_window: "Fenster offen", rs_ass: "Auto-Start/Stopp", rs_sleep: "Ruhemodus", rs_safety: "Sicherheit", rs_central: "Zentralmodus", rs_inhibition: "ausgesetzt",
+      rs_fan_ass: "Lüften (Auto-Start/Stopp)", rs_dry_ass: "Entfeuchten (Auto-Start/Stopp)",
+      msg_safety_detected: "Sicherheitsmodus: Der Temperatursensor antwortet nicht mehr",
+      msg_overpowering_detected: "Lastabwurf: maximale Leistung erreicht",
+      msg_hvac_off_manual: "Manuell ausgeschaltet",
+      msg_hvac_off_auto_start_stop: "Durch Auto-Start/Stopp ausgeschaltet",
+      msg_hvac_off_window_detection: "Durch die Fensteröffnungserkennung ausgeschaltet",
+      msg_hvac_off_sleep_mode: "Durch den Ruhemodus ausgeschaltet",
+      msg_hvac_off_safety_detection: "Durch den Sicherheitsmodus ausgeschaltet",
+      msg_hvac_off_central_mode: "Durch den Zentralmodus ausgeschaltet",
+      msg_hvac_off_inhibition: "Thermostat ausgesetzt: Gerätesteuerung pausiert",
+      msg_hvac_fan_only_auto_start_stop: "Nur Lüften durch Auto-Start/Stopp",
+      msg_hvac_dry_auto_start_stop: "Entfeuchten durch Auto-Start/Stopp",
+      msg_target_temp_window_eco: "Sollwert abgesenkt: Fenster offen (Eco)",
+      msg_target_temp_window_frost: "Sollwert abgesenkt: Fenster offen (Frostschutz)",
+      msg_target_temp_power: "Sollwert abgesenkt: Lastabwurf",
+      msg_target_temp_central_mode: "Sollwert vom Zentralmodus vorgegeben",
+      msg_target_temp_activity_detected: "Sollwert: Aktivität erkannt",
+      msg_target_temp_activity_not_detected: "Sollwert: keine Aktivität im Raum",
+      msg_target_temp_absence_detected: "Sollwert: Abwesenheit erkannt",
+      msg_target_temp_timed_preset: "Sollwert: temporäre Voreinstellung aktiv",
+      msg_not_initialized: "Thermostat wird initialisiert",
+      msg_underlying_unavailable: "Ein gesteuertes Gerät ist nicht verfügbar",
+      err_entity: "Wähle im Editor eine Klima-Entität aus.",
+      history: "Temperaturverlauf", setpoint: "Sollwert", lower: "Senken", raise: "Erhöhen", close: "Schließen", unavailable: "Entität nicht verfügbar",
+      fan: "Lüfter", preset: "Voreinstellung", timed: "Temporäre Voreinstellung", timer: "Timer", swing_v: "Vertikales Schwenken", swing_h: "Horizontales Schwenken",
+      why: "Warum dieser Zustand?",
+      st_safety: "Sicherheit · Sensor stumm", st_heat_fail: "Heizungsausfall", st_cool_fail: "Kühlungsausfall", st_inhibited: "Gestoppt · ausgesetzt",
+      st_overpower: "Lastabwurf aktiv", st_win_off: "Gestoppt · Fenster offen", st_win: "Fenster offen", st_stopped: "Gestoppt · {0}", st_timed: "{0} · noch {1}",
+      p_safety: "Sicherheit", p_safety_t: "Temperatursensor stumm: Sicherheitsheizung",
+      p_overpower: "Lastabwurf", p_overpower_t: "Maximale Leistung erreicht: Heizung gedrosselt",
+      p_fail: "Ausfall", p_heat_fail_t: "Heizungsausfall erkannt: Die Temperatur steigt nicht", p_cool_fail_t: "Kühlungsausfall erkannt",
+      p_inh_bypass: "Aussetzung ignoriert", p_inh_bypass_t: "Bypass der Aussetzung aktiv", p_inh_bypass_tap: "Bypass der Aussetzung aktiv — tippen zum Deaktivieren",
+      p_inh: "Ausgesetzt", p_inh_t: "Gerätesteuerung ausgesetzt", p_inh_tap: "Gerätesteuerung ausgesetzt — tippen, um die Aussetzung zu ignorieren",
+      p_win_bypass: "Fenster ignoriert", p_win_bypass_tap: "Die Fensteröffnungserkennung wird ignoriert — tippen zum Wiederherstellen",
+      p_win_open: "Fenster offen", p_win_open_tap: "Öffnung erkannt: Heizung reduziert oder aus — tippen zum Ignorieren",
+      p_win_closed_tap: "Fenster geschlossen — tippen, um die Fensteröffnungserkennung zu ignorieren",
+      p_ass_stop: "Auto-Stopp", p_ass_stopped_t: "Durch Auto-Start/Stopp gestoppt", p_ass_on_t: "Auto-Start/Stopp aktiv", p_ass_off_t: "Auto-Start/Stopp deaktiviert",
+      p_tap_off: "{0} — tippen zum Deaktivieren", p_tap_on: "{0} — tippen zum Aktivieren",
+      p_present_t: "Anwesenheit erkannt", p_away: "Abwesend", p_away_t: "Niemand zu Hause: Abwesenheits-Sollwert",
+      p_motion: "Bewegung", p_motion_t: "Bewegung im Raum erkannt", p_no_motion_t: "Keine Bewegung",
+      p_locked: "Gesperrt", p_locked_t: "Thermostat gesperrt",
+      pw_heat: "Heizung {0} %", pw_ext: "Außen {0}°",
+      w_timed: "Temporäre Voreinstellung aktiv", w_remaining: "{0}, noch {1}", w_inh_bypass: "Bypass der Aussetzung aktiviert", w_win_bypass: "Fensteröffnungserkennung ignoriert (Bypass)",
+      w_heat_fail: "Heizungsausfall erkannt", w_heat_fail_sub: "Die Temperatur steigt trotz Heizen nicht", w_cool_fail: "Kühlungsausfall erkannt",
+      w_locked: "Thermostat gesperrt", w_recalc: "Gesteuertes Gerät wird aktualisiert", w_none: "Keine Warnungen",
+      w_off_sub: "Der Thermostat ist ausgeschaltet.", w_ok_sub: "Der Thermostat folgt normal seinem Sollwert.",
+      tp_left: "<b>{0}</b> noch {1}", tp_then: " · danach {0}", tp_cancel: "Abbrechen", tp_for: "Dauer",
+      e_entity: "Klima-Entität", e_name: "Angezeigter Name", e_icon: "Symbol (Gerät aus)", e_show_fan: "Lüfter", e_show_preset: "Voreinstellung (Boost…)",
+      e_show_swing: "Schwenken", e_layout: "Darstellung", e_min_temp: "Minimaler Sollwert", e_max_temp: "Maximaler Sollwert",
+      e_temperature_sensor: "Temperatursensor (sonst der des Geräts)", e_graph_hours: "Standarddauer des Diagramms",
+      e_badges: "Status-Badges (bis zu 4 Entitäten: Fenster, Anwesenheit, Luftfeuchte…)",
+      e_vtherm: "Versatile-Thermostat-Funktionen (Fenster, Anwesenheit, Lastabwurf, Timer…)", e_vtherm_info: "Infos unter den Bedienelementen",
+      e_vtherm_inhibition_bypass: "Schalter für den Bypass der Aussetzung (Inhibition-Plugin)", e_vtherm_auto_start_stop: "Auto-Start/Stopp-Schalter (automatisch, wenn leer)",
+      e_layout_full: "Vollständig (mit Drehregler)", e_layout_compact: "Kompakt (breit, ohne Drehregler)",
+      e_info_heat: "Heizrate (%)", e_info_power: "Mittlere Leistung (W)", e_info_ext: "Außentemperatur", e_info_bar: "Heizbalken",
+      g_temp: "Temperatur", g_sensor: " · Sensor", g_loading: "Wird geladen…", g_error: "Verlauf nicht verfügbar: {0}", g_nodata: "Keine Temperaturdaten in diesem Zeitraum.",
+      g_current: "Aktuell", g_min: "Min", g_max: "Max", g_avg: "Mittel", g_heat: "Heizen", g_cool: "Kühlen", g_setpoint: "Sollwert {0}°",
+      g_hours: "{0} h", g_days: "{0} Tage", g_hour_axis: "{0}:00",
+      card_desc: "Kompakte, je nach Betrieb animierte Klima-/Heizungskarte (aus, heizen, kühlen), auch zu zweit nebeneinander auf dem Handy gut lesbar.",
+    },
+    en: {
+      dec: ".",
+      mode_off: "Off", mode_heat: "Heat", mode_cool: "Cool", mode_heat_cool: "Auto", mode_auto: "Auto", mode_dry: "Dry", mode_fan_only: "Fan",
+      act_heating: "Heating", act_cooling: "Cooling", act_drying: "Drying", act_fan: "Fan", act_idle: "Idle", act_off: "Off", act_preheating: "Preheating", act_defrosting: "Defrosting",
+      fan_auto: "Auto", fan_quiet: "Quiet", fan_low: "Low", fan_medium: "Medium", fan_high: "High", fan_off: "Off",
+      preset_none: "Normal", preset_boost: "Boost", preset_away: "Away", preset_eco: "Eco", preset_comfort: "Comfort", preset_sleep: "Sleep", preset_home: "Home",
+      preset_activity: "Activity", preset_frost: "Frost protection", preset_power: "Load shedding", preset_safety: "Safety", preset_security: "Safety",
+      swing_off: "Fixed", swing_stop: "Fixed", swing_on: "Swing", swing_swing: "Swing", swing_windnice: "Comfort", swing_vertical: "Vertical", swing_horizontal: "Horiz.", swing_both: "Both",
+      rs_window: "window open", rs_ass: "auto-start/stop", rs_sleep: "sleep mode", rs_safety: "safety", rs_central: "central mode", rs_inhibition: "inhibited",
+      rs_fan_ass: "fan only (auto-start/stop)", rs_dry_ass: "drying (auto-start/stop)",
+      msg_safety_detected: "Safety mode: the temperature sensor stopped responding",
+      msg_overpowering_detected: "Load shedding: maximum power reached",
+      msg_hvac_off_manual: "Turned off manually",
+      msg_hvac_off_auto_start_stop: "Turned off by auto-start/stop",
+      msg_hvac_off_window_detection: "Turned off by open window detection",
+      msg_hvac_off_sleep_mode: "Turned off by sleep mode",
+      msg_hvac_off_safety_detection: "Turned off by safety mode",
+      msg_hvac_off_central_mode: "Turned off by central mode",
+      msg_hvac_off_inhibition: "Thermostat inhibited: device control suspended",
+      msg_hvac_fan_only_auto_start_stop: "Fan only by auto-start/stop",
+      msg_hvac_dry_auto_start_stop: "Drying by auto-start/stop",
+      msg_target_temp_window_eco: "Setpoint lowered: window open (eco)",
+      msg_target_temp_window_frost: "Setpoint lowered: window open (frost protection)",
+      msg_target_temp_power: "Setpoint lowered: load shedding",
+      msg_target_temp_central_mode: "Setpoint set by central mode",
+      msg_target_temp_activity_detected: "Setpoint: activity detected",
+      msg_target_temp_activity_not_detected: "Setpoint: no activity in the room",
+      msg_target_temp_absence_detected: "Setpoint: absence detected",
+      msg_target_temp_timed_preset: "Setpoint: timed preset running",
+      msg_not_initialized: "Thermostat is initializing",
+      msg_underlying_unavailable: "A controlled device is unavailable",
+      err_entity: "Choose a climate entity in the editor.",
+      history: "Temperature history", setpoint: "Setpoint", lower: "Lower", raise: "Raise", close: "Close", unavailable: "Entity unavailable",
+      fan: "Fan", preset: "Preset", timed: "Timed preset", timer: "Timer", swing_v: "Vertical swing", swing_h: "Horizontal swing",
+      why: "Why this state?",
+      st_safety: "Safety · no sensor data", st_heat_fail: "Heating failure", st_cool_fail: "Cooling failure", st_inhibited: "Stopped · inhibited",
+      st_overpower: "Load shedding active", st_win_off: "Stopped · window open", st_win: "Window open", st_stopped: "Stopped · {0}", st_timed: "{0} · {1} left",
+      p_safety: "Safety", p_safety_t: "Temperature sensor not responding: safety heating",
+      p_overpower: "Load shedding", p_overpower_t: "Maximum power reached: heating reduced",
+      p_fail: "Failure", p_heat_fail_t: "Heating failure detected: the temperature is not rising", p_cool_fail_t: "Cooling failure detected",
+      p_inh_bypass: "Inhibition bypassed", p_inh_bypass_t: "Inhibition bypass active", p_inh_bypass_tap: "Inhibition bypass active — tap to turn it off",
+      p_inh: "Inhibited", p_inh_t: "Device control suspended", p_inh_tap: "Device control suspended — tap to bypass the inhibition",
+      p_win_bypass: "Window ignored", p_win_bypass_tap: "Open window detection is ignored — tap to restore it",
+      p_win_open: "Window open", p_win_open_tap: "Opening detected: heating reduced or off — tap to ignore it",
+      p_win_closed_tap: "Windows closed — tap to ignore open window detection",
+      p_ass_stop: "Auto stop", p_ass_stopped_t: "Stopped by auto-start/stop", p_ass_on_t: "Auto-start/stop on", p_ass_off_t: "Auto-start/stop off",
+      p_tap_off: "{0} — tap to turn it off", p_tap_on: "{0} — tap to turn it on",
+      p_present_t: "Presence detected", p_away: "Away", p_away_t: "Nobody home: away setpoint applied",
+      p_motion: "Motion", p_motion_t: "Motion detected in the room", p_no_motion_t: "No motion",
+      p_locked: "Locked", p_locked_t: "Thermostat locked",
+      pw_heat: "Heating {0} %", pw_ext: "Outside {0}°",
+      w_timed: "Timed preset running", w_remaining: "{0}, {1} left", w_inh_bypass: "Inhibition bypass on", w_win_bypass: "Open window detection ignored (bypass)",
+      w_heat_fail: "Heating failure detected", w_heat_fail_sub: "The temperature is not rising despite heating", w_cool_fail: "Cooling failure detected",
+      w_locked: "Thermostat locked", w_recalc: "Controlled device is updating", w_none: "No alerts",
+      w_off_sub: "The thermostat is off.", w_ok_sub: "The thermostat is following its setpoint normally.",
+      tp_left: "<b>{0}</b> {1} left", tp_then: " · then {0}", tp_cancel: "Cancel", tp_for: "Duration",
+      e_entity: "Climate entity", e_name: "Display name", e_icon: "Icon (device off)", e_show_fan: "Fan", e_show_preset: "Preset (boost…)",
+      e_show_swing: "Swing", e_layout: "Layout", e_min_temp: "Minimum setpoint", e_max_temp: "Maximum setpoint",
+      e_temperature_sensor: "Temperature sensor (otherwise the device's own)", e_graph_hours: "Default graph duration",
+      e_badges: "Status badges (up to 4 entities: window, presence, humidity…)",
+      e_vtherm: "Versatile Thermostat features (window, presence, load shedding, timer…)", e_vtherm_info: "Information below the controls",
+      e_vtherm_inhibition_bypass: "Inhibition bypass switch (inhibition plugin)", e_vtherm_auto_start_stop: "Auto-start/stop switch (automatic if empty)",
+      e_layout_full: "Full (with dial)", e_layout_compact: "Compact (wide, without dial)",
+      e_info_heat: "Heating rate (%)", e_info_power: "Average power (W)", e_info_ext: "Outdoor temperature", e_info_bar: "Heating bar",
+      g_temp: "Temperature", g_sensor: " · sensor", g_loading: "Loading…", g_error: "History unavailable: {0}", g_nodata: "No temperature data for this period.",
+      g_current: "Current", g_min: "Min", g_max: "Max", g_avg: "Average", g_heat: "Heating", g_cool: "Cooling", g_setpoint: "setpoint {0}°",
+      g_hours: "{0} h", g_days: "{0} d", g_hour_axis: "{0}:00",
+      card_desc: "Compact climate/heating card that animates with what the device is doing (off, heating, cooling), readable two side by side on mobile.",
+    },
   };
+  let LANG = "fr", LOCALE = "fr-FR";
+  const pickLang = (l) => { const k = String(l || "").toLowerCase().split(/[-_]/)[0]; return I18N[k] ? k : null; };
+  // langue de l'utilisateur Home Assistant (sinon celle de la page), français par défaut
+  const setLang = (hass) => {
+    const l = (hass && ((hass.locale && hass.locale.language) || hass.language)) || (typeof document !== "undefined" && document.documentElement && document.documentElement.lang) || "";
+    const k = pickLang(l);
+    LANG = k || "fr";
+    LOCALE = k ? l : "fr-FR";
+  };
+  setLang(null);
+  const tr = (k, ...args) => {
+    const s = (I18N[LANG] && I18N[LANG][k]) ?? I18N.fr[k] ?? k;
+    return args.length ? s.replace(/\{(\d)\}/g, (_, i) => args[i]) : s;
+  };
+  const has = (k) => I18N.fr[k] !== undefined;
+  const dec = (s) => String(s).replace(".", tr("dec"));
+
+  const MODE_META = {
+    off: { icon: "mdi:power", rgb: "150,160,178" },
+    heat: { icon: "mdi:fire", rgb: "255,128,48" },
+    cool: { icon: "mdi:snowflake", rgb: "64,190,255" },
+    heat_cool: { icon: "mdi:sun-snowflake-variant", rgb: "185,139,255" },
+    auto: { icon: "mdi:thermostat-auto", rgb: "185,139,255" },
+    dry: { icon: "mdi:water-percent", rgb: "45,217,196" },
+    fan_only: { icon: "mdi:fan", rgb: "45,212,160" },
+  };
+  const modeLabel = (m) => tr("mode_" + m);
   const PRIMARY_MODES = ["off", "heat", "cool", "fan_only"];
 
   // Dégradés de la roue [début, fin]
@@ -43,90 +271,103 @@
     fan_only: ["#bff7e2", "#14b884"],
   };
 
-  const ACTION_LABEL = {
-    heating: "Chauffe",
-    cooling: "Refroidit",
-    drying: "Déshumidifie",
-    fan: "Ventile",
-    idle: "En veille",
-    off: "Éteint",
-    preheating: "Préchauffe",
-    defrosting: "Dégivrage",
-  };
-
   const FAN_META = {
-    auto: { icon: "mdi:fan-auto", label: "Auto", speed: 1.4 },
-    quiet: { icon: "mdi:weather-night", label: "Silence", speed: 3 },
-    "1": { icon: "mdi:fan-speed-1", label: "1", speed: 2.4 },
-    "2": { icon: "mdi:fan-speed-2", label: "2", speed: 1.8 },
-    "3": { icon: "mdi:fan-speed-3", label: "3", speed: 1.3 },
-    "4": { icon: "mdi:fan", label: "4", speed: 0.9 },
-    "5": { icon: "mdi:fan", label: "5", speed: 0.6 },
-    low: { icon: "mdi:fan-speed-1", label: "Faible", speed: 2.4 },
-    medium: { icon: "mdi:fan-speed-2", label: "Moyen", speed: 1.5 },
-    high: { icon: "mdi:fan-speed-3", label: "Fort", speed: 0.8 },
-    off: { icon: "mdi:fan-off", label: "Arrêt", speed: 0 },
+    auto: { icon: "mdi:fan-auto", speed: 1.4 },
+    quiet: { icon: "mdi:weather-night", speed: 3 },
+    "1": { icon: "mdi:fan-speed-1", speed: 2.4 },
+    "2": { icon: "mdi:fan-speed-2", speed: 1.8 },
+    "3": { icon: "mdi:fan-speed-3", speed: 1.3 },
+    "4": { icon: "mdi:fan", speed: 0.9 },
+    "5": { icon: "mdi:fan", speed: 0.6 },
+    low: { icon: "mdi:fan-speed-1", speed: 2.4 },
+    medium: { icon: "mdi:fan-speed-2", speed: 1.5 },
+    high: { icon: "mdi:fan-speed-3", speed: 0.8 },
+    off: { icon: "mdi:fan-off", speed: 0 },
   };
   const PRESET_META = {
-    none: { icon: "mdi:tune-variant", label: "Normal" },
-    boost: { icon: "mdi:rocket-launch", label: "Boost" },
-    away: { icon: "mdi:home-export-outline", label: "Absent" },
-    eco: { icon: "mdi:leaf", label: "Éco" },
-    comfort: { icon: "mdi:sofa", label: "Confort" },
-    sleep: { icon: "mdi:sleep", label: "Nuit" },
-    home: { icon: "mdi:home", label: "Maison" },
-    activity: { icon: "mdi:run", label: "Activité" },
-    frost: { icon: "mdi:snowflake-thermometer", label: "Hors-gel" },
-    power: { icon: "mdi:flash-alert", label: "Délestage" },
-    safety: { icon: "mdi:shield-alert", label: "Sécurité" },
-    security: { icon: "mdi:shield-alert", label: "Sécurité" },
+    none: { icon: "mdi:tune-variant" },
+    boost: { icon: "mdi:rocket-launch" },
+    away: { icon: "mdi:home-export-outline" },
+    eco: { icon: "mdi:leaf" },
+    comfort: { icon: "mdi:sofa" },
+    sleep: { icon: "mdi:sleep" },
+    home: { icon: "mdi:home" },
+    activity: { icon: "mdi:run" },
+    frost: { icon: "mdi:snowflake-thermometer" },
+    power: { icon: "mdi:flash-alert" },
+    safety: { icon: "mdi:shield-alert" },
+    security: { icon: "mdi:shield-alert" },
   };
-  // Versatile Thermostat : raisons d'arrêt / de mode (valeurs anglaises et françaises selon les versions)
+  // Versatile Thermostat : raisons d'arrêt / de mode (valeurs anglaises et françaises selon les versions) → clé de texte
   const VT_REASON = {
-    window: "fenêtre ouverte", fenetre: "fenêtre ouverte", "fenêtre": "fenêtre ouverte", window_detection: "fenêtre ouverte",
-    "auto-start/stop": "auto-start/stop", auto_start_stop: "auto-start/stop",
-    sleep: "veille", sommeil: "veille", sleep_mode: "veille", safety: "sécurité", safety_detection: "sécurité",
-    central_mode: "mode central", "central mode": "mode central", inhibition: "inhibé",
-    fan_only_auto_start_stop: "ventilation (auto-start/stop)", dry_auto_start_stop: "déshumidification (auto-start/stop)",
+    window: "window", fenetre: "window", "fenêtre": "window", window_detection: "window",
+    "auto-start/stop": "ass", auto_start_stop: "ass",
+    sleep: "sleep", sommeil: "sleep", sleep_mode: "sleep", safety: "safety", safety_detection: "safety",
+    central_mode: "central", "central mode": "central", inhibition: "inhibition",
+    fan_only_auto_start_stop: "fan_ass", dry_auto_start_stop: "dry_ass",
   };
-  // messages de Versatile Thermostat (specific_states.messages) : [icône, gravité, texte]
+  // messages de Versatile Thermostat (specific_states.messages) : [icône, gravité] (texte : msg_<clé>)
   const VT_MSG = {
-    safety_detected: ["mdi:shield-alert", "bad", "Mode sécurité : la sonde de température ne répond plus"],
-    overpowering_detected: ["mdi:flash-alert", "bad", "Délestage : puissance maximale atteinte"],
-    hvac_off_manual: ["mdi:power", "info", "Éteint manuellement"],
-    hvac_off_auto_start_stop: ["mdi:power-cycle", "warn", "Éteint par l'auto-start/stop"],
-    hvac_off_window_detection: ["mdi:window-open-variant", "warn", "Éteint par la détection d'ouverture"],
-    hvac_off_sleep_mode: ["mdi:sleep", "info", "Éteint par le mode veille"],
-    hvac_off_safety_detection: ["mdi:shield-alert", "bad", "Éteint par le mode sécurité"],
-    hvac_off_central_mode: ["mdi:home-switch-outline", "info", "Éteint par le mode central"],
-    hvac_off_inhibition: ["mdi:pause-circle-outline", "warn", "Thermostat inhibé : commande des appareils suspendue"],
-    hvac_fan_only_auto_start_stop: ["mdi:fan", "warn", "Ventilation seule par l'auto-start/stop"],
-    hvac_dry_auto_start_stop: ["mdi:water-percent", "warn", "Déshumidification par l'auto-start/stop"],
-    target_temp_window_eco: ["mdi:window-open-variant", "warn", "Consigne abaissée : fenêtre ouverte (éco)"],
-    target_temp_window_frost: ["mdi:window-open-variant", "warn", "Consigne abaissée : fenêtre ouverte (hors-gel)"],
-    target_temp_power: ["mdi:flash-alert", "bad", "Consigne abaissée : délestage"],
-    target_temp_central_mode: ["mdi:home-switch-outline", "info", "Consigne imposée par le mode central"],
-    target_temp_activity_detected: ["mdi:motion-sensor", "info", "Consigne : activité détectée"],
-    target_temp_activity_not_detected: ["mdi:motion-sensor-off", "info", "Consigne : pas d'activité dans la pièce"],
-    target_temp_absence_detected: ["mdi:home-export-outline", "info", "Consigne : absence détectée"],
-    target_temp_timed_preset: ["mdi:timer-sand", "info", "Consigne : préréglage temporaire en cours"],
-    not_initialized: ["mdi:progress-clock", "warn", "Thermostat en cours d'initialisation"],
-    underlying_unavailable: ["mdi:lan-disconnect", "bad", "Un appareil piloté est indisponible"],
+    safety_detected: ["mdi:shield-alert", "bad"],
+    overpowering_detected: ["mdi:flash-alert", "bad"],
+    hvac_off_manual: ["mdi:power", "info"],
+    hvac_off_auto_start_stop: ["mdi:power-cycle", "warn"],
+    hvac_off_window_detection: ["mdi:window-open-variant", "warn"],
+    hvac_off_sleep_mode: ["mdi:sleep", "info"],
+    hvac_off_safety_detection: ["mdi:shield-alert", "bad"],
+    hvac_off_central_mode: ["mdi:home-switch-outline", "info"],
+    hvac_off_inhibition: ["mdi:pause-circle-outline", "warn"],
+    hvac_fan_only_auto_start_stop: ["mdi:fan", "warn"],
+    hvac_dry_auto_start_stop: ["mdi:water-percent", "warn"],
+    target_temp_window_eco: ["mdi:window-open-variant", "warn"],
+    target_temp_window_frost: ["mdi:window-open-variant", "warn"],
+    target_temp_power: ["mdi:flash-alert", "bad"],
+    target_temp_central_mode: ["mdi:home-switch-outline", "info"],
+    target_temp_activity_detected: ["mdi:motion-sensor", "info"],
+    target_temp_activity_not_detected: ["mdi:motion-sensor-off", "info"],
+    target_temp_absence_detected: ["mdi:home-export-outline", "info"],
+    target_temp_timed_preset: ["mdi:timer-sand", "info"],
+    not_initialized: ["mdi:progress-clock", "warn"],
+    underlying_unavailable: ["mdi:lan-disconnect", "bad"],
   };
   const VT_ASS_REASONS = ["hvac_off_auto_start_stop", "hvac_fan_only_auto_start_stop", "hvac_dry_auto_start_stop"];
   const VT_DURATIONS = [[30, "30 min"], [60, "1 h"], [120, "2 h"], [240, "4 h"]];
   const durTxt = (m) => (m >= 60 ? `${Math.floor(m / 60)} h${m % 60 ? " " + String(m % 60).padStart(2, "0") : ""}` : `${Math.max(0, Math.round(m))} min`);
   const SWING_META = {
-    off: { icon: "mdi:arrow-oscillating-off", label: "Fixe" },
-    stop: { icon: "mdi:arrow-oscillating-off", label: "Fixe" },
-    on: { icon: "mdi:arrow-oscillating", label: "Oscille" },
-    swing: { icon: "mdi:arrow-oscillating", label: "Oscille" },
-    windnice: { icon: "mdi:weather-windy", label: "Confort" },
-    vertical: { icon: "mdi:arrow-up-down", label: "Vertical" },
-    horizontal: { icon: "mdi:arrow-left-right", label: "Horiz." },
-    both: { icon: "mdi:arrow-all", label: "Les deux" },
+    off: { icon: "mdi:arrow-oscillating-off" },
+    stop: { icon: "mdi:arrow-oscillating-off" },
+    on: { icon: "mdi:arrow-oscillating" },
+    swing: { icon: "mdi:arrow-oscillating" },
+    windnice: { icon: "mdi:weather-windy" },
+    vertical: { icon: "mdi:arrow-up-down" },
+    horizontal: { icon: "mdi:arrow-left-right" },
+    both: { icon: "mdi:arrow-all" },
   };
+  // attribut → [préfixe des textes, table d'icônes]
+  const ATTR_META = {
+    fan_mode: ["fan", FAN_META],
+    preset_mode: ["preset", PRESET_META],
+    swing_mode: ["swing", SWING_META],
+    swing_horizontal_mode: ["swing", SWING_META],
+  };
+  const metaKey = (meta, v) => (v != null && Object.prototype.hasOwnProperty.call(meta, String(v)) ? String(v) : null);
+  const metaOf = (meta, v) => { const k = metaKey(meta, v); return k == null ? null : meta[k]; };
   const cap = (s) => (s ? String(s).charAt(0).toUpperCase() + String(s).slice(1).replace(/_/g, " ") : "");
+  // valeur d'attribut affichée : texte de la carte pour les valeurs connues, sinon traduction
+  // de Home Assistant (et de l'intégration) si elle existe, sinon valeur brute
+  const attrLabel = (hass, so, attr, v) => {
+    if (v == null || v === "") return "";
+    const raw = String(v);
+    const am = ATTR_META[attr], k = am && metaKey(am[1], raw);
+    if (k != null && has(`${am[0]}_${k}`)) return tr(`${am[0]}_${k}`);
+    if (hass && so && typeof hass.formatEntityAttributeValue === "function") {
+      try {
+        const f = hass.formatEntityAttributeValue(so, attr, raw);
+        if (f != null && f !== "" && String(f) !== raw) return String(f);
+      } catch (e) { /* ancienne version de Home Assistant */ }
+    }
+    return cap(raw);
+  };
 
   const START = 135;
   const SWEEP = 270;
@@ -148,7 +389,7 @@
   const fmt = (t, step) => {
     if (t == null || isNaN(t)) return "–";
     const d = step && step < 1 ? 1 : 0;
-    return Number(t).toFixed(d).replace(".", ",");
+    return dec(Number(t).toFixed(d));
   };
 
   class HolmClimateCard extends HTMLElement {
@@ -160,7 +401,7 @@
       return { type: "custom:holm-climate-card", entity: e || "", show_fan: true, show_preset: true, show_swing: false };
     }
     setConfig(config) {
-      if (!config || !config.entity) throw new Error("Choisis une entité climate dans l'éditeur.");
+      if (!config || !config.entity) throw new Error(tr("err_entity"));
       this._config = { show_fan: true, show_swing: true, show_preset: true, layout: "full", graph_hours: 24, ...config };
       const rows = config.grid_options && config.grid_options.rows;
       this.toggleAttribute("fixed-rows", rows != null && rows !== "auto" && !isNaN(Number(rows)));
@@ -182,6 +423,8 @@
     set hass(hass) {
       this._hass = hass;
       if (!this._config) return;
+      setLang(hass);
+      if (this._lang !== LANG) { this._lang = LANG; this._built = false; }   // textes fixes du DOM : reconstruire
       this._so = hass.states[this._config.entity];
       this._ss = this._config.temperature_sensor ? hass.states[this._config.temperature_sensor] : null;
       this._prune();
@@ -245,7 +488,7 @@
               <div class="name" id="name"></div>
               <div class="status" id="statusbox"><span class="dot"></span><span id="status"></span><ha-icon class="why" id="why" icon="mdi:information-outline"></ha-icon></div>
             </div>
-            <button class="hcur curbtn" id="hcur" title="Historique de la température"><ha-icon icon="mdi:home-thermometer-outline"></ha-icon><span id="hcurt"></span></button>
+            <button class="hcur curbtn" id="hcur" title="${tr("history")}"><ha-icon icon="mdi:home-thermometer-outline"></ha-icon><span id="hcurt"></span></button>
           </div>
           <div class="vb" id="vb"></div>
           <div class="main">
@@ -264,20 +507,20 @@
                 <path class="hit" d="${arc(START, START + SWEEP)}"/>
               </svg>
               <div class="center">
-                <div class="lbl" id="lbl">Consigne</div>
+                <div class="lbl" id="lbl">${tr("setpoint")}</div>
                 <div class="target"><span id="tgt"></span><span class="dec" id="dec"></span><sup>°</sup></div>
-                <button class="curtxt curbtn" id="curb" title="Historique de la température"><ha-icon icon="mdi:home-thermometer-outline"></ha-icon><span id="curt"></span></button>
+                <button class="curtxt curbtn" id="curb" title="${tr("history")}"><ha-icon icon="mdi:home-thermometer-outline"></ha-icon><span id="curt"></span></button>
               </div>
-              <button class="step minus" id="minus" aria-label="Baisser"><ha-icon icon="mdi:minus"></ha-icon></button>
-              <button class="step plus" id="plus" aria-label="Monter"><ha-icon icon="mdi:plus"></ha-icon></button>
+              <button class="step minus" id="minus" aria-label="${tr("lower")}"><ha-icon icon="mdi:minus"></ha-icon></button>
+              <button class="step plus" id="plus" aria-label="${tr("raise")}"><ha-icon icon="mdi:plus"></ha-icon></button>
             </div>
             <div class="side">
               <div class="ctl">
                 <div class="modes" id="modes"></div>
                 <div class="cstep" id="cstep">
-                  <button class="cbtn" id="cminus" aria-label="Baisser"><ha-icon icon="mdi:minus"></ha-icon></button>
+                  <button class="cbtn" id="cminus" aria-label="${tr("lower")}"><ha-icon icon="mdi:minus"></ha-icon></button>
                   <div class="ctgt"><span id="ctgt"></span><sup>°</sup></div>
-                  <button class="cbtn" id="cplus" aria-label="Monter"><ha-icon icon="mdi:plus"></ha-icon></button>
+                  <button class="cbtn" id="cplus" aria-label="${tr("raise")}"><ha-icon icon="mdi:plus"></ha-icon></button>
                 </div>
               </div>
               <div class="chips" id="chips"></div>
@@ -287,11 +530,11 @@
         </div>
         <div class="sheet" id="sheet">
           <div class="sheet-in">
-            <div class="sheet-h"><span id="sheet-t"></span><button id="sheet-x" aria-label="Fermer"><ha-icon icon="mdi:close"></ha-icon></button></div>
+            <div class="sheet-h"><span id="sheet-t"></span><button id="sheet-x" aria-label="${tr("close")}"><ha-icon icon="mdi:close"></ha-icon></button></div>
             <div class="opts" id="opts"></div>
           </div>
         </div>
-        <div class="na" id="na">Entité indisponible</div>`;
+        <div class="na" id="na">${tr("unavailable")}</div>`;
       root.appendChild(card);
       this._card = card;
       const $ = (id) => root.getElementById(id);
@@ -427,12 +670,18 @@
     }
     // interrupteur de bypass de l'inhibition (fourni par le plugin d'inhibition, à choisir dans l'éditeur)
     _inhSwitch() { return this._config.vtherm_inhibition_bypass || null; }
-    _reasonTxt(r) {
+    // raison normalisée : clé connue (window, ass…) ou valeur brute
+    _reasonKey(r) {
       if (!r) return null;
       const k = String(r).trim().toLowerCase().replace(/^hvac_(off_)?/, "");
       if (k === "manual" || k === "manuel" || k === "none" || k === "") return null;
-      return VT_REASON[k] || k.replace(/_/g, " ");
+      return VT_REASON[k] || k;
     }
+    _reasonTxt(k) {
+      if (!k) return null;
+      return has("rs_" + k) ? tr("rs_" + k) : k.replace(/_/g, " ");
+    }
+    _lbl(attr, v) { return attrLabel(this._hass, this._so, attr, v); }
 
     // ---------- helpers ----------
     _range() {
@@ -523,24 +772,23 @@
       const hm = a.hvac_modes || [];
       const bicon = mode === "off" ? (this._config.icon || (hm.includes("heat") && !hm.includes("cool") ? "mdi:radiator-off" : "mdi:power")) : meta.icon;
       $("bicon").setAttribute("icon", bicon);
-      const fm = FAN_META[this._val("fan_mode")];
+      const fm = metaOf(FAN_META, this._val("fan_mode"));
       card.style.setProperty("--spin", `${fm && fm.speed ? fm.speed : 1.6}s`);
 
       let status;
-      if (mode === "off") status = "Éteint";
-      else if (action === "pending") status = meta.label + "…";
-      else status = ACTION_LABEL[action] || meta.label;
+      if (mode === "off") status = modeLabel("off");
+      else if (action === "pending") status = modeLabel(mode in MODE_META ? mode : "off") + "…";
+      else status = action && has("act_" + action) ? tr("act_" + action) : modeLabel(mode in MODE_META ? mode : "off");
       const vt = this._vtOn() ? this._vt() : null;
       if (vt) {
-        const pm = (k) => (PRESET_META[k] || { label: cap(k) }).label;
-        const why = this._reasonTxt(vt.offReason) || this._reasonTxt(vt.modeReason);
-        if (vt.safety) status = "Sécurité · sonde muette";
-        else if (vt.heatFail || vt.coolFail) status = vt.heatFail ? "Défaut de chauffe" : "Défaut de refroidissement";
-        else if (vt.inhibited && !vt.inhBypass) status = "Arrêté · inhibé";
-        else if (vt.overpower) status = "Délestage en cours";
-        else if (vt.winOpen && !vt.bypass) status = mode === "off" || why === "fenêtre ouverte" ? "Arrêté · fenêtre ouverte" : "Fenêtre ouverte";
-        else if (mode === "off" && why) status = `Arrêté · ${why}`;
-        else if (vt.timed && vt.timed.preset) status = `${pm(vt.timed.preset)} · encore ${durTxt(vt.timed.remaining ?? 0)}`;
+        const whyKey = this._reasonKey(vt.offReason) || this._reasonKey(vt.modeReason);
+        if (vt.safety) status = tr("st_safety");
+        else if (vt.heatFail || vt.coolFail) status = vt.heatFail ? tr("st_heat_fail") : tr("st_cool_fail");
+        else if (vt.inhibited && !vt.inhBypass) status = tr("st_inhibited");
+        else if (vt.overpower) status = tr("st_overpower");
+        else if (vt.winOpen && !vt.bypass) status = mode === "off" || whyKey === "window" ? tr("st_win_off") : tr("st_win");
+        else if (mode === "off" && whyKey) status = tr("st_stopped", this._reasonTxt(whyKey));
+        else if (vt.timed && vt.timed.preset) status = tr("st_timed", this._lbl("preset_mode", vt.timed.preset), durTxt(vt.timed.remaining ?? 0));
         card.dataset.vt = vt.safety || vt.overpower || vt.heatFail || vt.coolFail ? "alert" : (vt.winOpen && !vt.bypass) || (vt.inhibited && !vt.inhBypass) ? "warn" : "";
       } else card.dataset.vt = "";
       $("status").textContent = status;
@@ -576,32 +824,32 @@
       const pill = (cls, icon, label, title, extra = "") =>
         `<span class="pill ${cls}" title="${title || label || ""}"><ha-icon icon="${icon}"></ha-icon>${label ? `<span>${label}</span>` : ""}${extra}</span>`;
       if (vt) {
-        if (vt.safety) out.push(pill("bad", "mdi:shield-alert", "Sécurité", "Sonde de température muette : chauffe de sécurité"));
-        if (vt.overpower) out.push(pill("bad", "mdi:flash-alert", "Délestage", "Puissance maximale atteinte : chauffage délesté"));
-        if (vt.heatFail) out.push(pill("bad", "mdi:radiator-disabled", "Défaut", "Défaut de chauffage détecté : la température ne monte pas"));
-        if (vt.coolFail) out.push(pill("bad", "mdi:snowflake-alert", "Défaut", "Défaut de refroidissement détecté"));
+        if (vt.safety) out.push(pill("bad", "mdi:shield-alert", tr("p_safety"), tr("p_safety_t")));
+        if (vt.overpower) out.push(pill("bad", "mdi:flash-alert", tr("p_overpower"), tr("p_overpower_t")));
+        if (vt.heatFail) out.push(pill("bad", "mdi:radiator-disabled", tr("p_fail"), tr("p_heat_fail_t")));
+        if (vt.coolFail) out.push(pill("bad", "mdi:snowflake-alert", tr("p_fail"), tr("p_cool_fail_t")));
         // pastilles actives : un toucher sur l'icône agit sur Versatile Thermostat
         const act = (cls, icon, label, title, a) => `<button class="pill ${cls}" data-act="${a}" title="${title}"><ha-icon icon="${icon}"></ha-icon>${label ? `<span>${label}</span>` : ""}</button>`;
         const inhSw = this._inhSwitch();
         if (vt.inhibited || vt.inhBypass) {
-          if (vt.inhBypass) out.push(inhSw ? act("info", "mdi:debug-step-over", "Inhibition ignorée", "Bypass de l'inhibition actif — toucher pour le désactiver", "inh-off") : pill("info", "mdi:debug-step-over", "Inhibition ignorée", "Bypass de l'inhibition actif"));
-          else out.push(inhSw ? act("warn", "mdi:pause-circle-outline", "Inhibé", "Commande des appareils suspendue — toucher pour ignorer l'inhibition", "inh-on") : pill("warn", "mdi:pause-circle-outline", "Inhibé", "Commande des appareils suspendue"));
+          if (vt.inhBypass) out.push(inhSw ? act("info", "mdi:debug-step-over", tr("p_inh_bypass"), tr("p_inh_bypass_tap"), "inh-off") : pill("info", "mdi:debug-step-over", tr("p_inh_bypass"), tr("p_inh_bypass_t")));
+          else out.push(inhSw ? act("warn", "mdi:pause-circle-outline", tr("p_inh"), tr("p_inh_tap"), "inh-on") : pill("warn", "mdi:pause-circle-outline", tr("p_inh"), tr("p_inh_t")));
         }
         if (vt.winCfg) {
-          if (vt.bypass) out.push(act("info", "mdi:window-open-variant", "Fenêtre ignorée", "La détection d'ouverture est ignorée — toucher pour la rétablir", "bypass-off"));
-          else if (vt.winOpen) out.push(act("warn", "mdi:window-open-variant", "Fenêtre ouverte", "Ouverture détectée : chauffage réduit ou coupé — toucher pour l'ignorer", "bypass-on"));
-          else out.push(act("dim", "mdi:window-closed-variant", "", "Fenêtres fermées — toucher pour ignorer la détection d'ouverture", "bypass-on"));
+          if (vt.bypass) out.push(act("info", "mdi:window-open-variant", tr("p_win_bypass"), tr("p_win_bypass_tap"), "bypass-off"));
+          else if (vt.winOpen) out.push(act("warn", "mdi:window-open-variant", tr("p_win_open"), tr("p_win_open_tap"), "bypass-on"));
+          else out.push(act("dim", "mdi:window-closed-variant", "", tr("p_win_closed_tap"), "bypass-on"));
         }
         if (vt.assCfg) {
           const sw = this._assSwitch(), on = this._assOpt && Date.now() - this._assOpt.ts < OPTIMISTIC_TTL ? this._assOpt.on : vt.assOn;
-          const cls = vt.assStopped ? "warn" : on ? "info" : "dim", label = vt.assStopped ? "Arrêt auto" : "";
-          const title = vt.assStopped ? "Arrêté par l'auto-start/stop" : on ? "Auto-start/stop actif" : "Auto-start/stop désactivé";
-          out.push(sw ? act(cls, on ? "mdi:power-cycle" : "mdi:sync-off", label, `${title} — toucher pour ${on ? "le désactiver" : "l'activer"}`, on ? "ass-off" : "ass-on")
+          const cls = vt.assStopped ? "warn" : on ? "info" : "dim", label = vt.assStopped ? tr("p_ass_stop") : "";
+          const title = vt.assStopped ? tr("p_ass_stopped_t") : on ? tr("p_ass_on_t") : tr("p_ass_off_t");
+          out.push(sw ? act(cls, on ? "mdi:power-cycle" : "mdi:sync-off", label, tr(on ? "p_tap_off" : "p_tap_on", title), on ? "ass-off" : "ass-on")
             : pill(cls, on ? "mdi:power-cycle" : "mdi:sync-off", label, title));
         }
-        if (vt.presCfg) out.push(vt.present ? pill("ok", "mdi:home-account", "", "Présence détectée") : pill("warn", "mdi:home-export-outline", "Absent", "Personne à la maison : consigne d'absence"));
-        if (vt.motCfg) out.push(vt.motion ? pill("ok", "mdi:motion-sensor", "Mouvement", "Mouvement détecté dans la pièce") : pill("dim", "mdi:motion-sensor-off", "", "Pas de mouvement"));
-        if (vt.locked) out.push(pill("info", "mdi:lock", "Verrouillé", "Thermostat verrouillé"));
+        if (vt.presCfg) out.push(vt.present ? pill("ok", "mdi:home-account", "", tr("p_present_t")) : pill("warn", "mdi:home-export-outline", tr("p_away"), tr("p_away_t")));
+        if (vt.motCfg) out.push(vt.motion ? pill("ok", "mdi:motion-sensor", tr("p_motion"), tr("p_motion_t")) : pill("dim", "mdi:motion-sensor-off", "", tr("p_no_motion_t")));
+        if (vt.locked) out.push(pill("info", "mdi:lock", tr("p_locked"), tr("p_locked_t")));
       }
       for (const id of (this._config.badges || []).slice(0, 4)) {
         const st = this._hass && this._hass.states[id];
@@ -614,7 +862,7 @@
           : dom === "person" || dom === "device_tracker" ? "mdi:account" : "mdi:information-outline");
         const name = a.friendly_name || id;
         const numeric = st.state !== "" && !isNaN(Number(st.state));
-        const label = numeric ? `${String(Number(st.state)).replace(".", ",")}${a.unit_of_measurement ? " " + a.unit_of_measurement : ""}` : on ? name : "";
+        const label = numeric ? `${dec(Number(st.state))}${a.unit_of_measurement ? " " + a.unit_of_measurement : ""}` : on ? name : "";
         out.push(`<button class="pill ${numeric ? "info" : on ? "warn" : "dim"}" data-ent="${id}" title="${name}"><ha-icon icon="${icon}"></ha-icon>${label ? `<span>${label}</span>` : ""}</button>`);
       }
       const html = out.join("");
@@ -632,10 +880,10 @@
       const bar = vt && vt.onPct != null && show.includes("bar") && this._so.state !== "off";
       if (!vt || (pct == null && w == null && ext == null && !bar)) { box.style.display = "none"; return; }
       box.style.display = "";
-      const heatTxt = pct != null ? `Chauffe ${Math.round(pct)} %${w != null ? ` · ${w} W` : ""}` : w != null ? `${w} W` : "";
+      const heatTxt = pct != null ? `${tr("pw_heat", Math.round(pct))}${w != null ? ` · ${w} W` : ""}` : w != null ? `${w} W` : "";
       const parts = [];
       if (heatTxt) parts.push(`<span><ha-icon icon="mdi:radiator"></ha-icon>${heatTxt}</span>`);
-      if (ext != null) parts.push(`<span><ha-icon icon="mdi:home-export-outline"></ha-icon>Ext. ${fmt(ext, 0.1)}°</span>`);
+      if (ext != null) parts.push(`<span><ha-icon icon="mdi:home-export-outline"></ha-icon>${tr("pw_ext", fmt(ext, 0.1))}</span>`);
       box.innerHTML = `${parts.length ? `<div class="vpt">${parts.join("")}</div>` : ""}${bar ? `<div class="vpb"><i style="width:${clamp(vt.onPct, 0, 100)}%"></i></div>` : ""}`;
     }
 
@@ -653,14 +901,14 @@
       const mode = this._val("state");
       const { step: st } = this._range();
       const fanOnly = this._fanOnly();
-      const fanTxt = fanOnly ? (FAN_META[this._val("fan_mode")] || { label: cap(this._val("fan_mode")) }).label : "";
+      const fanTxt = fanOnly ? this._lbl("fan_mode", this._val("fan_mode")) : "";
       $("ctgt").textContent = t == null ? (fanOnly ? fanTxt : "–") : fmt(t, st);
       this._card.classList.toggle("fanonly", fanOnly);
       if (t == null && fanOnly) {
         const list = this._so.attributes.fan_modes, i = Math.max(0, list.indexOf(this._val("fan_mode")));
         $("tgt").textContent = fanTxt;
         $("dec").textContent = "";
-        $("lbl").textContent = "Ventilation";
+        $("lbl").textContent = tr("fan");
         const at = START + (list.length > 1 ? i / (list.length - 1) : 1) * SWEEP;
         $("val").setAttribute("d", arc(START, at));
         const p = polar(at);
@@ -678,9 +926,9 @@
       }
       $("knob").style.display = "";
       const { step } = this._range();
-      const [ip, dp] = fmt(t, step).split(",");
+      const [ip, dp] = fmt(t, step).split(I18N[LANG].dec);
       $("tgt").textContent = ip;
-      $("dec").textContent = dp != null ? "," + dp : "";
+      $("dec").textContent = dp != null ? I18N[LANG].dec + dp : "";
       const at = START + this._frac(t) * SWEEP;
       // Chauffage : remplissage min → consigne ; clim : consigne → max
       const d = mode === "cool" ? arc(at, START + SWEEP) : arc(START, at);
@@ -688,7 +936,7 @@
       const p = polar(at);
       $("knob").setAttribute("cx", p.x.toFixed(2));
       $("knob").setAttribute("cy", p.y.toFixed(2));
-      $("lbl").textContent = mode === "off" ? "Éteint" : "Consigne";
+      $("lbl").textContent = mode === "off" ? modeLabel("off") : tr("setpoint");
     }
 
     _renderModes(mode, modes) {
@@ -705,8 +953,13 @@
         const b = document.createElement("button");
         b.className = "mode" + (m === mode ? " on" : "");
         b.style.setProperty("--c", mm.rgb);
-        b.title = mm.label;
-        b.innerHTML = `<ha-icon icon="${mm.icon}"></ha-icon><span>${mm.label}</span>`;
+        // libellé court de la carte ; nom complet (traduction Home Assistant) en info-bulle
+        let full = modeLabel(m);
+        if (this._hass && typeof this._hass.formatEntityState === "function") {
+          try { const f = this._hass.formatEntityState(this._so, m); if (f && f !== m) full = f; } catch (e) { /* ancienne version de Home Assistant */ }
+        }
+        b.title = full;
+        b.innerHTML = `<ha-icon icon="${mm.icon}"></ha-icon><span>${modeLabel(m)}</span>`;
         b.addEventListener("click", () => {
           if (m === this._val("state")) return;
           this._set("state", m);
@@ -722,28 +975,26 @@
       const cfg = this._config;
       if (cfg.show_fan && a.fan_modes && a.fan_modes.length) {
         const v = this._val("fan_mode");
-        const m = FAN_META[v] || { icon: "mdi:fan", label: cap(v) };
-        defs.push({ key: "fan", title: "Ventilation", icon: m.icon, label: m.label, spin: true, value: v, options: a.fan_modes, meta: FAN_META, attr: "fan_mode", service: "set_fan_mode" });
+        const m = metaOf(FAN_META, v) || { icon: "mdi:fan" };
+        defs.push({ key: "fan", title: tr("fan"), icon: m.icon, label: this._lbl("fan_mode", v), spin: true, value: v, options: a.fan_modes, meta: FAN_META, attr: "fan_mode", service: "set_fan_mode" });
       }
       if (cfg.show_preset && a.preset_modes && a.preset_modes.length) {
         const v = this._val("preset_mode") || "none";
-        const m = PRESET_META[v] || { icon: "mdi:star-outline", label: cap(v) };
-        defs.push({ key: "preset", title: "Préréglage", icon: m.icon, label: m.label, hot: v !== "none", value: v, options: a.preset_modes, meta: PRESET_META, attr: "preset_mode", service: "set_preset_mode" });
+        const m = metaOf(PRESET_META, v) || { icon: "mdi:star-outline" };
+        defs.push({ key: "preset", title: tr("preset"), icon: m.icon, label: this._lbl("preset_mode", v), hot: v !== "none", value: v, options: a.preset_modes, meta: PRESET_META, attr: "preset_mode", service: "set_preset_mode" });
       }
       if (this._vtOn() && a.preset_modes && a.preset_modes.length) {
         const vt = this._vt();
-        const t = vt.timed;
-        defs.push({ key: "timed", title: "Préréglage temporaire", icon: "mdi:timer-outline", label: t ? durTxt(t.remaining ?? 0) : "Minuteur", hot: !!t, value: t ? Math.round(t.remaining ?? 0) : "", options: [], custom: "timed" });
+        const tm = vt.timed;
+        defs.push({ key: "timed", title: tr("timed"), icon: "mdi:timer-outline", label: tm ? durTxt(tm.remaining ?? 0) : tr("timer"), hot: !!tm, value: tm ? Math.round(tm.remaining ?? 0) : "", options: [], custom: "timed" });
       }
       if (cfg.show_swing && a.swing_modes && a.swing_modes.length) {
         const v = this._val("swing_mode");
-        const m = SWING_META[v] || { label: cap(v) };
-        defs.push({ key: "swing", title: "Oscillation verticale", icon: "mdi:arrow-up-down", label: m.label, hot: v && v !== "stop" && v !== "off", value: v, options: a.swing_modes, meta: SWING_META, attr: "swing_mode", service: "set_swing_mode" });
+        defs.push({ key: "swing", title: tr("swing_v"), icon: "mdi:arrow-up-down", label: this._lbl("swing_mode", v), hot: v && v !== "stop" && v !== "off", value: v, options: a.swing_modes, meta: SWING_META, attr: "swing_mode", service: "set_swing_mode" });
       }
       if (cfg.show_swing && a.swing_horizontal_modes && a.swing_horizontal_modes.length) {
         const v = this._val("swing_horizontal_mode");
-        const m = SWING_META[v] || { icon: "mdi:arrow-left-right", label: cap(v) };
-        defs.push({ key: "swingh", title: "Oscillation horizontale", icon: "mdi:arrow-left-right", label: m.label, hot: v && v !== "stop" && v !== "off", value: v, options: a.swing_horizontal_modes, meta: SWING_META, attr: "swing_horizontal_mode", service: "set_swing_horizontal_mode" });
+        defs.push({ key: "swingh", title: tr("swing_h"), icon: "mdi:arrow-left-right", label: this._lbl("swing_horizontal_mode", v), hot: v && v !== "stop" && v !== "off", value: v, options: a.swing_horizontal_modes, meta: SWING_META, attr: "swing_horizontal_mode", service: "set_swing_horizontal_mode" });
       }
       return defs;
     }
@@ -772,7 +1023,7 @@
       const $ = this.$;
       if (this._sheet === "why") {
         if (!this._vtOn()) return this._closeSheet();
-        $("sheet-t").textContent = "Pourquoi cet état\u00a0?";
+        $("sheet-t").textContent = tr("why");
         return this._renderWhySheet($("opts"));
       }
       const d = (this._defs || []).find((x) => x.key === this._sheet);
@@ -783,10 +1034,10 @@
       box.innerHTML = "";
       box.dataset.n = d.options.length;
       d.options.forEach((o) => {
-        const m = d.meta[o] || { icon: d.icon, label: cap(o) };
+        const m = metaOf(d.meta, o) || { icon: d.icon };
         const b = document.createElement("button");
         b.className = "opt" + (o === d.value ? " on" : "");
-        b.innerHTML = `<ha-icon icon="${m.icon}"></ha-icon><span>${m.label}</span>`;
+        b.innerHTML = `<ha-icon icon="${m.icon}"></ha-icon><span>${this._lbl(d.attr, o)}</span>`;
         b.addEventListener("click", () => {
           this._set(d.attr, o);
           this._call(d.service, { [d.attr]: o });
@@ -815,37 +1066,37 @@
         let sub = "";
         if (k === "not_initialized" && Array.isArray(sp.not_initialized_entities) && sp.not_initialized_entities.length) sub = sp.not_initialized_entities.map(name).join(", ");
         if (k === "underlying_unavailable" && Array.isArray(sp.unavailable_underlying_entities)) sub = sp.unavailable_underlying_entities.map(name).join(", ");
-        if (k === "target_temp_timed_preset" && vt.timed) sub = `${(PRESET_META[vt.timed.preset] || { label: cap(vt.timed.preset) }).label}, encore ${durTxt(vt.timed.remaining ?? 0)}`;
-        if (m) add(k, m[0], m[1], m[2], sub);
+        if (k === "target_temp_timed_preset" && vt.timed) sub = tr("w_remaining", this._lbl("preset_mode", vt.timed.preset), durTxt(vt.timed.remaining ?? 0));
+        if (m) add(k, m[0], m[1], tr("msg_" + k), sub);
         else add(k, "mdi:information-outline", "info", cap(k.replace(/^hvac_(off_)?/, "")), "");
       }
-      if (vt.timed && !seen.has("target_temp_timed_preset")) add("timed", "mdi:timer-sand", "info", "Préréglage temporaire en cours", `${(PRESET_META[vt.timed.preset] || { label: cap(vt.timed.preset) }).label}, encore ${durTxt(vt.timed.remaining ?? 0)}`);
-      if (vt.inhBypass) add("inh_bypass", "mdi:debug-step-over", "info", "Bypass de l'inhibition activé", "");
-      if (vt.bypass) add("win_bypass", "mdi:window-open-variant", "info", "Détection d'ouverture ignorée (bypass)", "");
-      if (vt.heatFail) add("heat_fail", "mdi:radiator-disabled", "bad", "Défaut de chauffage détecté", "La température ne monte pas malgré la chauffe");
-      if (vt.coolFail) add("cool_fail", "mdi:snowflake-alert", "bad", "Défaut de refroidissement détecté", "");
-      if (vt.locked) add("locked", "mdi:lock", "info", "Thermostat verrouillé", "");
-      if (sp.is_recalculate_scheduled === true) add("recalc", "mdi:progress-clock", "info", "Appareil piloté en cours de mise à jour", "");
+      if (vt.timed && !seen.has("target_temp_timed_preset")) add("timed", "mdi:timer-sand", "info", tr("w_timed"), tr("w_remaining", this._lbl("preset_mode", vt.timed.preset), durTxt(vt.timed.remaining ?? 0)));
+      if (vt.inhBypass) add("inh_bypass", "mdi:debug-step-over", "info", tr("w_inh_bypass"), "");
+      if (vt.bypass) add("win_bypass", "mdi:window-open-variant", "info", tr("w_win_bypass"), "");
+      if (vt.heatFail) add("heat_fail", "mdi:radiator-disabled", "bad", tr("w_heat_fail"), tr("w_heat_fail_sub"));
+      if (vt.coolFail) add("cool_fail", "mdi:snowflake-alert", "bad", tr("w_cool_fail"), "");
+      if (vt.locked) add("locked", "mdi:lock", "info", tr("w_locked"), "");
+      if (sp.is_recalculate_scheduled === true) add("recalc", "mdi:progress-clock", "info", tr("w_recalc"), "");
       return out;
     }
     _renderWhySheet(box) {
       const vt = this._vt(), list = this._whyList(vt);
       box.dataset.n = "why";
       box.innerHTML = list.length ? list.map((m) => `<div class="why-r ${m.sev}"><ha-icon icon="${m.icon}"></ha-icon><div><b>${m.txt}</b>${m.sub ? `<small>${m.sub}</small>` : ""}</div></div>`).join("")
-        : `<div class="why-r ok"><ha-icon icon="mdi:check-circle-outline"></ha-icon><div><b>${this._so.state === "off" ? "Éteint" : "Aucune alerte"}</b><small>${this._so.state === "off" ? "Le thermostat est à l'arrêt." : "Le thermostat suit sa consigne normalement."}</small></div></div>`;
+        : `<div class="why-r ok"><ha-icon icon="mdi:check-circle-outline"></ha-icon><div><b>${this._so.state === "off" ? modeLabel("off") : tr("w_none")}</b><small>${this._so.state === "off" ? tr("w_off_sub") : tr("w_ok_sub")}</small></div></div>`;
       this._card.classList.add("sheet-open");
     }
     _renderTimedSheet(box) {
       const a = this._so.attributes, vt = this._vt();
       const presets = (a.preset_modes || []).filter((p) => !["none", "power", "safety", "security"].includes(p));
       if (!presets.includes(this._tpPreset)) this._tpPreset = presets.includes("boost") ? "boost" : presets.includes("comfort") ? "comfort" : presets[0];
-      const lab = (p) => (PRESET_META[p] || { label: cap(p) }).label, ic = (p) => (PRESET_META[p] || { icon: "mdi:star-outline" }).icon;
+      const lab = (p) => this._lbl("preset_mode", p), ic = (p) => (metaOf(PRESET_META, p) || { icon: "mdi:star-outline" }).icon;
       box.dataset.n = "timed";
       box.innerHTML = `
-        ${vt.timed ? `<div class="tpa"><ha-icon icon="mdi:timer-sand"></ha-icon><span><b>${lab(vt.timed.preset)}</b> encore ${durTxt(vt.timed.remaining ?? 0)}${vt.timed.original ? ` · puis ${lab(vt.timed.original)}` : ""}</span><button class="tpc" data-cancel>Annuler</button></div>` : ""}
-        <div class="tpl">Préréglage</div>
+        ${vt.timed ? `<div class="tpa"><ha-icon icon="mdi:timer-sand"></ha-icon><span>${tr("tp_left", lab(vt.timed.preset), durTxt(vt.timed.remaining ?? 0))}${vt.timed.original ? tr("tp_then", lab(vt.timed.original)) : ""}</span><button class="tpc" data-cancel>${tr("tp_cancel")}</button></div>` : ""}
+        <div class="tpl">${tr("preset")}</div>
         <div class="tpr">${presets.map((p) => `<button class="opt${p === this._tpPreset ? " on" : ""}" data-p="${p}"><ha-icon icon="${ic(p)}"></ha-icon><span>${lab(p)}</span></button>`).join("")}</div>
-        <div class="tpl">Pendant</div>
+        <div class="tpl">${tr("tp_for")}</div>
         <div class="tpr">${VT_DURATIONS.map(([m, l]) => `<button class="opt dur" data-m="${m}"><ha-icon icon="mdi:timer-outline"></ha-icon><span>${l}</span></button>`).join("")}</div>`;
       box.querySelectorAll("[data-p]").forEach((b) => b.addEventListener("click", () => { this._tpPreset = b.dataset.p; this._renderTimedSheet(box); }));
       box.querySelectorAll("[data-m]").forEach((b) => b.addEventListener("click", () => {
@@ -1246,6 +1497,9 @@
     }
     set hass(hass) {
       this._hass = hass;
+      setLang(hass);
+      if (this._lang !== LANG && this._form) { this._form.remove(); this._form = null; this._isVt = null; }   // libellés figés à la création
+      this._lang = LANG;
       this._render();
     }
     connectedCallback() {
@@ -1263,7 +1517,7 @@
               { name: "icon", selector: { icon: {} } },
             ],
           },
-          { name: "layout", selector: { select: { mode: "dropdown", options: [{ value: "full", label: "Complète (avec la roue)" }, { value: "compact", label: "Compacte (en largeur, sans la roue)" }] } } },
+          { name: "layout", selector: { select: { mode: "dropdown", options: [{ value: "full", label: tr("e_layout_full") }, { value: "compact", label: tr("e_layout_compact") }] } } },
           {
             type: "grid", name: "", schema: [
               { name: "min_temp", selector: { number: { min: 5, max: 35, step: 0.5, mode: "box", unit_of_measurement: "°C" } } },
@@ -1282,25 +1536,7 @@
           { name: "badges", selector: { entity: { multiple: true } } },
         ];
         this._base = f.schema;
-        const L = {
-          entity: "Entité climate",
-          name: "Nom affiché",
-          icon: "Icône (appareil éteint)",
-          show_fan: "Ventilation",
-          show_preset: "Préréglage (boost…)",
-          show_swing: "Oscillation",
-          layout: "Présentation",
-          min_temp: "Consigne minimum",
-          max_temp: "Consigne maximum",
-          temperature_sensor: "Sonde de température (sinon celle de l'appareil)",
-          graph_hours: "Durée du graphique par défaut",
-          badges: "Pastilles d'état (jusqu'à 4 entités : fenêtre, présence, humidité…)",
-          vtherm: "Fonctions Versatile Thermostat (fenêtre, présence, délestage, minuteur…)",
-          vtherm_info: "Informations sous les commandes",
-          vtherm_inhibition_bypass: "Interrupteur de bypass de l'inhibition (plugin d'inhibition)",
-          vtherm_auto_start_stop: "Interrupteur auto-start/stop (automatique si vide)",
-        };
-        f.computeLabel = (s) => L[s.name] || s.name;
+        f.computeLabel = (s) => (has("e_" + s.name) ? tr("e_" + s.name) : s.name);
         f.addEventListener("value-changed", (ev) => {
           ev.stopPropagation();
           const v = { ...ev.detail.value };
@@ -1327,8 +1563,8 @@
         this._isVt = key;
         const vtExtra = [
           { name: "vtherm_info", selector: { select: { multiple: true, mode: "list", options: [
-            { value: "heat", label: "Taux de chauffe (%)" }, { value: "power", label: "Puissance moyenne (W)" },
-            { value: "ext", label: "Température extérieure" }, { value: "bar", label: "Barre de chauffe" }] } } },
+            { value: "heat", label: tr("e_info_heat") }, { value: "power", label: tr("e_info_power") },
+            { value: "ext", label: tr("e_info_ext") }, { value: "bar", label: tr("e_info_bar") }] } } },
           { name: "vtherm_inhibition_bypass", selector: { entity: { domain: "switch" } } },
           { name: "vtherm_auto_start_stop", selector: { entity: { domain: "switch" } } },
         ];
@@ -1351,6 +1587,7 @@
     }
     open(hass, o) {
       this._hass = hass;
+      setLang(hass);
       this._o = o;
       this._hours = o.hours;
       this._data = null;
@@ -1368,17 +1605,17 @@
       setTimeout(() => { this.shadowRoot.innerHTML = ""; }, 220);
     }
     _build() {
-      const R = [[6, "6 h"], [24, "24 h"], [48, "48 h"], [168, "7 j"]];
-      if (!R.some(([h]) => h === this._hours)) R.push([this._hours, this._hours % 24 === 0 ? this._hours / 24 + " j" : this._hours + " h"]);
+      const R = [[6, tr("g_hours", 6)], [24, tr("g_hours", 24)], [48, tr("g_hours", 48)], [168, tr("g_days", 7)]];
+      if (!R.some(([h]) => h === this._hours)) R.push([this._hours, this._hours % 24 === 0 ? tr("g_days", this._hours / 24) : tr("g_hours", this._hours)]);
       R.sort((a, b) => a[0] - b[0]);
       this.shadowRoot.innerHTML = `<style>${HolmClimateGraph.css()}</style>
-        <div class="bg"><div class="dlg" role="dialog" aria-label="Historique de la température">
-          <div class="hd"><div class="tt"><b>${this._esc(this._o.name)}</b><small>Température${this._o.sensor ? " · sonde" : ""}</small></div>
+        <div class="bg"><div class="dlg" role="dialog" aria-label="${tr("history")}">
+          <div class="hd"><div class="tt"><b>${this._esc(this._o.name)}</b><small>${tr("g_temp")}${this._o.sensor ? tr("g_sensor") : ""}</small></div>
             <div class="rg">${R.map(([h, l]) => `<button data-h="${h}" class="${h === this._hours ? "on" : ""}">${l}</button>`).join("")}</div>
-            <button class="x" aria-label="Fermer"><ha-icon icon="mdi:close"></ha-icon></button></div>
+            <button class="x" aria-label="${tr("close")}"><ha-icon icon="mdi:close"></ha-icon></button></div>
           <div class="stats" id="stats"></div>
-          <div class="ch" id="ch"><div class="ld">Chargement…</div></div>
-          <div class="lg"><span><i class="lt"></i>Température</span><span><i class="lc"></i>Consigne</span><span><i class="lh"></i>Chauffe</span><span><i class="lk"></i>Clim</span></div>
+          <div class="ch" id="ch"><div class="ld">${tr("g_loading")}</div></div>
+          <div class="lg"><span><i class="lt"></i>${tr("g_temp")}</span><span><i class="lc"></i>${tr("setpoint")}</span><span><i class="lh"></i>${tr("g_heat")}</span><span><i class="lk"></i>${tr("g_cool")}</span></div>
         </div></div>`;
       const r = this.shadowRoot;
       r.querySelector(".bg").addEventListener("click", (e) => { if (e.target.classList.contains("bg")) this.close(); });
@@ -1394,7 +1631,7 @@
       const seq = (this._seq = (this._seq || 0) + 1);
       const end = new Date(), start = new Date(end - this._hours * 3600e3);
       const ch = this.shadowRoot.getElementById("ch");
-      if (ch && !this._data) ch.innerHTML = `<div class="ld">Chargement…</div>`;
+      if (ch && !this._data) ch.innerHTML = `<div class="ld">${tr("g_loading")}</div>`;
       try {
         const base = { type: "history/history_during_period", start_time: start.toISOString(), end_time: end.toISOString(), significant_changes_only: false };
         const [cl, se] = await Promise.all([
@@ -1420,7 +1657,7 @@
         this._data = { t0: +start, t1: +end, temp, target, bands };
         this._draw();
       } catch (e) {
-        if (ch) ch.innerHTML = `<div class="ld">Historique indisponible : ${this._esc(e && e.message ? e.message : e)}</div>`;
+        if (ch) ch.innerHTML = `<div class="ld">${tr("g_error", this._esc(e && e.message ? e.message : e))}</div>`;
       }
     }
     _draw() {
@@ -1430,19 +1667,19 @@
       const P = { l: 34, r: 12, t: 10, b: 24 };
       const vals = [...d.temp.map((p) => p.v), ...d.target.filter((p) => p.v != null).map((p) => p.v)];
       const st = this.shadowRoot.getElementById("stats");
-      if (!d.temp.length) { ch.innerHTML = `<div class="ld">Aucune donnée de température sur cette période.</div>`; st.innerHTML = ""; return; }
+      if (!d.temp.length) { ch.innerHTML = `<div class="ld">${tr("g_nodata")}</div>`; st.innerHTML = ""; return; }
       let lo = Math.floor(Math.min(...vals) - 0.5), hi = Math.ceil(Math.max(...vals) + 0.5);
       if (hi - lo < 3) { const m = (hi + lo) / 2; lo = Math.floor(m - 1.5); hi = Math.ceil(m + 1.5); }
       const x = (t) => P.l + ((t - d.t0) / (d.t1 - d.t0)) * (W - P.l - P.r);
       const y = (v) => P.t + (1 - (v - lo) / (hi - lo)) * (H - P.t - P.b);
-      const fr = (v) => Number(v).toFixed(1).replace(".", ",");
+      const fr = (v) => dec(Number(v).toFixed(1));
       // axes
       const ys = []; const yStep = hi - lo > 12 ? 4 : hi - lo > 6 ? 2 : 1;
       for (let v = Math.ceil(lo / yStep) * yStep; v <= hi; v += yStep) ys.push(v);
       const hStep = this._hours <= 6 ? 1 : this._hours <= 24 ? 3 : this._hours <= 48 ? 6 : 24;
       const xs = []; const f = new Date(d.t0); f.setMinutes(0, 0, 0);
       for (let t = +f; t <= d.t1; t += 3600e3) { const dt = new Date(t); if (t >= d.t0 && (hStep === 24 ? dt.getHours() === 0 : dt.getHours() % hStep === 0)) xs.push(t); }
-      const lbl = (t) => { const dt = new Date(t); return hStep === 24 ? dt.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric" }) : dt.getHours() + "h"; };
+      const lbl = (t) => { const dt = new Date(t); return hStep === 24 ? dt.toLocaleDateString(LOCALE, { weekday: "short", day: "numeric" }) : tr("g_hour_axis", dt.getHours()); };
       // courbes
       const pts = d.temp.map((p) => [x(Math.max(p.t, d.t0)), y(p.v)]);
       pts.push([x(d.t1), pts[pts.length - 1][1]]);
@@ -1471,7 +1708,7 @@
       const heatMin = d.bands.filter((b) => b.k === "heat").reduce((a, b) => a + (Math.min(b.t1, d.t1) - Math.max(b.t0, d.t0)), 0) / 60000;
       const coolMin = d.bands.filter((b) => b.k === "cool").reduce((a, b) => a + (Math.min(b.t1, d.t1) - Math.max(b.t0, d.t0)), 0) / 60000;
       const dur = (m) => (m >= 60 ? `${Math.floor(m / 60)} h ${String(Math.round(m % 60)).padStart(2, "0")}` : `${Math.round(m)} min`);
-      st.innerHTML = `<div><small>Actuelle</small><b>${fr(tv[tv.length - 1])}°</b></div><div><small>Min</small><b>${fr(Math.min(...tv))}°</b></div><div><small>Max</small><b>${fr(Math.max(...tv))}°</b></div><div><small>Moyenne</small><b>${fr(avg)}°</b></div>${heatMin > 0.5 ? `<div><small>Chauffe</small><b>${dur(heatMin)}</b></div>` : ""}${coolMin > 0.5 ? `<div><small>Clim</small><b>${dur(coolMin)}</b></div>` : ""}`;
+      st.innerHTML = `<div><small>${tr("g_current")}</small><b>${fr(tv[tv.length - 1])}°</b></div><div><small>${tr("g_min")}</small><b>${fr(Math.min(...tv))}°</b></div><div><small>${tr("g_max")}</small><b>${fr(Math.max(...tv))}°</b></div><div><small>${tr("g_avg")}</small><b>${fr(avg)}°</b></div>${heatMin > 0.5 ? `<div><small>${tr("g_heat")}</small><b>${dur(heatMin)}</b></div>` : ""}${coolMin > 0.5 ? `<div><small>${tr("g_cool")}</small><b>${dur(coolMin)}</b></div>` : ""}`;
       // survol
       const svg = ch.querySelector("svg"), hv = ch.querySelector(".hv"), tip = ch.querySelector(".tip");
       const at = (arr, t) => { let r = null; for (const p of arr) { if (p.t <= t) r = p; else break; } return r; };
@@ -1484,7 +1721,7 @@
         hv.style.display = ""; hv.querySelector("line").setAttribute("x1", px); hv.querySelector("line").setAttribute("x2", px);
         hv.querySelector("circle").setAttribute("cx", px); hv.querySelector("circle").setAttribute("cy", y(p.v));
         tip.style.display = "";
-        tip.innerHTML = `<small>${new Date(t).toLocaleString("fr-FR", { weekday: "short", hour: "2-digit", minute: "2-digit" })}</small><b>${fr(p.v)}°</b>${c && c.v != null ? `<span>consigne ${fr(c.v)}°</span>` : ""}`;
+        tip.innerHTML = `<small>${new Date(t).toLocaleString(LOCALE, { weekday: "short", hour: "2-digit", minute: "2-digit" })}</small><b>${fr(p.v)}°</b>${c && c.v != null ? `<span>${tr("g_setpoint", fr(c.v))}</span>` : ""}`;
         const tx = (px / W) * rc.width;
         tip.style.left = `${Math.min(Math.max(tx, 60), rc.width - 60)}px`;
       };
@@ -1544,7 +1781,7 @@
     window.customCards.push({
       type: "holm-climate-card",
       name: "HOLM Climate",
-      description: "Clim/chauffage compacte et animée selon l'usage (éteint, chauffage, clim), lisible à 2 côte à côte sur mobile.",
+      description: tr("card_desc"),
       preview: true,
     });
   }
