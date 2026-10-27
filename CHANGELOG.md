@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.0
+- **Verrou de Versatile Thermostat** ([#7](https://github.com/kaaribou/climate-card-holm/issues/7)) : lu dans `lock_manager` (VTherm récent). Verrouillé pour les utilisateurs, la roue, les boutons, les modes, les préréglages et les pastilles actives sont grisés et bloqués ; le cadenas de l'entête appelle `versatile_thermostat.unlock` / `lock`, avec saisie du **code** quand VTherm en demande un (« Code refusé » si erroné).
+- **Verrou anti-erreur** (`lock: true`, `lock_delay`) pour n'importe quel thermostat : commandes bloquées jusqu'à un toucher sur le cadenas, puis débloquées quelques secondes avec décompte. Verrouillée, la roue laisse défiler la page sur mobile.
+- **Traductions** ([#8](https://github.com/kaaribou/climate-card-holm/pull/8), merci à [@hco](https://github.com/hco)) : carte, éditeur et graphique en français, allemand et anglais selon la langue de Home Assistant ; séparateur décimal et dates selon la langue ; valeurs inconnues de la carte traduites par Home Assistant. Le français reste la langue par défaut.
+- **Correctif** ([#9](https://github.com/kaaribou/climate-card-holm/issues/9)) : la carte ne plante plus quand une carte conteneur (expander-card, Streamline…) lui transmet d'abord un `hass` vide.
+
 ## 1.4.0
 - **Pourquoi cet état ?** (Versatile Thermostat, [#4](https://github.com/kaaribou/climate-card-holm/issues/4)) : un toucher sur la ligne d'état (icône ⓘ, colorée quand il y a un message) ouvre la liste des messages du VTherm traduits — raison de l'arrêt, consigne appliquée, délestage, sécurité, appareil piloté indisponible (avec son nom), initialisation, bypass, défauts, verrou.
 - **Volets toujours entiers** ([#5](https://github.com/kaaribou/climate-card-holm/issues/5)) : le volet Minuteur (et les autres) ne dépasse plus de la carte ; l'entête et le bouton de fermeture restent visibles, le contenu défile si besoin. Volets plus compacts en demi-largeur (boutons moins hauts, durées sur 2 colonnes).

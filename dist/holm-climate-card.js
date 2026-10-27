@@ -20,7 +20,7 @@
  * - Pastilles d'état configurables (badges) pour n'importe quel thermostat
  */
 (() => {
-  const VERSION = "1.4.0";
+  const VERSION = "1.5.0";
   // ---------- textes (fr = comportement d'origine, langue choisie d'après Home Assistant) ----------
   const I18N = {
     fr: {
@@ -77,6 +77,8 @@
       w_timed: "Préréglage temporaire en cours", w_remaining: "{0}, encore {1}", w_inh_bypass: "Bypass de l'inhibition activé", w_win_bypass: "Détection d'ouverture ignorée (bypass)",
       w_heat_fail: "Défaut de chauffage détecté", w_heat_fail_sub: "La température ne monte pas malgré la chauffe", w_cool_fail: "Défaut de refroidissement détecté",
       w_locked: "Thermostat verrouillé", w_recalc: "Appareil piloté en cours de mise à jour", w_none: "Aucune alerte",
+      lk_lock: "Verrouiller", lk_unlock: "Déverrouiller", lk_locked: "Commandes verrouillées : touchez le cadenas pour déverrouiller", lk_vt: "Verrouillé par Versatile Thermostat : touchez pour déverrouiller", lk_vt_open: "Déverrouillé : touchez pour verrouiller", lk_local_open: "Déverrouillé quelques secondes : touchez pour verrouiller", lk_code: "Code de verrouillage", lk_bad: "Code refusé", lk_title: "Verrouillage",
+      e_lock: "Verrouiller les commandes (anti-erreur au défilement)", e_lock_delay: "Durée du déverrouillage",
       w_off_sub: "Le thermostat est à l'arrêt.", w_ok_sub: "Le thermostat suit sa consigne normalement.",
       tp_left: "<b>{0}</b> encore {1}", tp_then: " · puis {0}", tp_cancel: "Annuler", tp_for: "Pendant",
       e_entity: "Entité climate", e_name: "Nom affiché", e_icon: "Icône (appareil éteint)", e_show_fan: "Ventilation", e_show_preset: "Préréglage (boost…)",
@@ -146,6 +148,8 @@
       w_timed: "Temporäre Voreinstellung aktiv", w_remaining: "{0}, noch {1}", w_inh_bypass: "Bypass der Aussetzung aktiviert", w_win_bypass: "Fensteröffnungserkennung ignoriert (Bypass)",
       w_heat_fail: "Heizungsausfall erkannt", w_heat_fail_sub: "Die Temperatur steigt trotz Heizen nicht", w_cool_fail: "Kühlungsausfall erkannt",
       w_locked: "Thermostat gesperrt", w_recalc: "Gesteuertes Gerät wird aktualisiert", w_none: "Keine Warnungen",
+      lk_lock: "Sperren", lk_unlock: "Entsperren", lk_locked: "Bedienung gesperrt: Schloss antippen zum Entsperren", lk_vt: "Von Versatile Thermostat gesperrt: antippen zum Entsperren", lk_vt_open: "Entsperrt: antippen zum Sperren", lk_local_open: "Für einige Sekunden entsperrt: antippen zum Sperren", lk_code: "Sperrcode", lk_bad: "Code abgelehnt", lk_title: "Sperre",
+      e_lock: "Bedienung sperren (Schutz vor versehentlichem Verstellen beim Scrollen)", e_lock_delay: "Dauer der Entsperrung",
       w_off_sub: "Der Thermostat ist ausgeschaltet.", w_ok_sub: "Der Thermostat folgt normal seinem Sollwert.",
       tp_left: "<b>{0}</b> noch {1}", tp_then: " · danach {0}", tp_cancel: "Abbrechen", tp_for: "Dauer",
       e_entity: "Klima-Entität", e_name: "Angezeigter Name", e_icon: "Symbol (Gerät aus)", e_show_fan: "Lüfter", e_show_preset: "Voreinstellung (Boost…)",
@@ -215,6 +219,8 @@
       w_timed: "Timed preset running", w_remaining: "{0}, {1} left", w_inh_bypass: "Inhibition bypass on", w_win_bypass: "Open window detection ignored (bypass)",
       w_heat_fail: "Heating failure detected", w_heat_fail_sub: "The temperature is not rising despite heating", w_cool_fail: "Cooling failure detected",
       w_locked: "Thermostat locked", w_recalc: "Controlled device is updating", w_none: "No alerts",
+      lk_lock: "Lock", lk_unlock: "Unlock", lk_locked: "Controls locked: tap the padlock to unlock", lk_vt: "Locked by Versatile Thermostat: tap to unlock", lk_vt_open: "Unlocked: tap to lock", lk_local_open: "Unlocked for a few seconds: tap to lock", lk_code: "Lock code", lk_bad: "Code rejected", lk_title: "Lock",
+      e_lock: "Lock the controls (prevents accidental changes while scrolling)", e_lock_delay: "Unlock duration",
       w_off_sub: "The thermostat is off.", w_ok_sub: "The thermostat is following its setpoint normally.",
       tp_left: "<b>{0}</b> {1} left", tp_then: " · then {0}", tp_cancel: "Cancel", tp_for: "Duration",
       e_entity: "Climate entity", e_name: "Display name", e_icon: "Icon (device off)", e_show_fan: "Fan", e_show_preset: "Preset (boost…)",
@@ -421,6 +427,7 @@
     }
 
     set hass(hass) {
+      if (!hass || !hass.states) return;   // certaines cartes conteneurs (expander-card…) transmettent d'abord un hass vide (#9)
       this._hass = hass;
       if (!this._config) return;
       setLang(hass);
@@ -488,6 +495,7 @@
               <div class="name" id="name"></div>
               <div class="status" id="statusbox"><span class="dot"></span><span id="status"></span><ha-icon class="why" id="why" icon="mdi:information-outline"></ha-icon></div>
             </div>
+            <button class="lockb" id="lockb"><ha-icon id="locki" icon="mdi:lock"></ha-icon><span id="lockt"></span></button>
             <button class="hcur curbtn" id="hcur" title="${tr("history")}"><ha-icon icon="mdi:home-thermometer-outline"></ha-icon><span id="hcurt"></span></button>
           </div>
           <div class="vb" id="vb"></div>
@@ -549,6 +557,7 @@
       $("head").addEventListener("click", () => {
         this.dispatchEvent(new CustomEvent("hass-more-info", { detail: { entityId: this._config.entity }, bubbles: true, composed: true }));
       });
+      $("lockb").addEventListener("click", (e) => { e.stopPropagation(); this._toggleLock(); });
       const openGraph = (e) => { e.stopPropagation(); this._openGraph(); };
       $("hcur").addEventListener("click", openGraph);
       $("curb").addEventListener("click", openGraph);
@@ -562,6 +571,7 @@
         const b = e.target.closest("[data-act],[data-ent]");
         if (!b) return;
         e.stopPropagation();
+        if (b.dataset.act && this._guard()) return;
         if (b.dataset.act === "bypass-on" || b.dataset.act === "bypass-off") {
           const on = b.dataset.act === "bypass-on";
           this._vtOpt = { bypass: on, ts: Date.now() };
@@ -595,6 +605,7 @@
       };
       dial.addEventListener("pointerdown", (e) => {
         if (!e.target.classList.contains("hit") && e.target.id !== "knob") return;
+        if (this._guard()) return;
         if (this._fanOnly()) {
           e.preventDefault();
           const r = dial.getBoundingClientRect(), sc = 200 / r.width;
@@ -623,6 +634,92 @@
       return !!a && (a.is_window_configured !== undefined || a.is_presence_configured !== undefined ||
         (a.specific_states && typeof a.specific_states === "object") || a.timed_preset_manager !== undefined);
     }
+    // ---------- verrouillage (#7) : verrou de Versatile Thermostat et/ou verrou local de la carte ----------
+    _lockInfo() {
+      const a = (this._so && this._so.attributes) || {};
+      const lm = a.lock_manager && typeof a.lock_manager === "object" ? a.lock_manager : null;
+      const sp = a.specific_states && typeof a.specific_states === "object" ? a.specific_states : {};
+      const vtCfg = a.is_lock_configured === true || !!lm;
+      let vtLocked = vtCfg && (lm ? lm.is_locked === true : (sp.is_locked === true || a.is_locked === true));
+      if (this._lkOpt && Date.now() - this._lkOpt.ts < OPTIMISTIC_TTL && this._lkOpt.locked !== vtLocked) vtLocked = this._lkOpt.locked;
+      else this._lkOpt = null;
+      const vtUsers = !lm || lm.lock_users !== false;   // le verrou ne bloque l'interface que si « utilisateurs » est coché
+      const local = !!this._config.lock;
+      const localLocked = local && !(this._unlockUntil && Date.now() < this._unlockUntil);
+      return { vtCfg, vtLocked, vtUsers, code: !!(lm && lm.lock_code), relock: lm ? Number(lm.auto_relock_sec) || 0 : 0, local, localLocked,
+        blocked: (vtLocked && vtUsers) || localLocked, shown: vtCfg || local };
+    }
+    _guard() {
+      if (!this._so || !this._lockInfo().blocked) return false;
+      const b = this.$("lockb");
+      b.classList.remove("nudge"); void b.offsetWidth; b.classList.add("nudge");
+      return true;
+    }
+    _toggleLock() {
+      const li = this._lockInfo();
+      if (li.vtLocked) {   // verrou VTherm actif : déverrouiller (avec code si VTherm en demande un)
+        if (li.code) { this._lkErr = false; this._sheet = "lock"; this._lkAction = "unlock"; return this._renderSheet(); }
+        return this._vtLock(false);
+      }
+      if (li.localLocked) {   // verrou local : déverrouiller quelques secondes
+        const sec = Math.max(5, Number(this._config.lock_delay) || 30);
+        this._unlockUntil = Date.now() + sec * 1000;
+        clearTimeout(this._relockT);
+        this._relockT = setTimeout(() => { this._unlockUntil = 0; this._render(); }, sec * 1000 + 50);
+        return this._render();
+      }
+      if (li.local) { this._unlockUntil = 0; clearTimeout(this._relockT); return this._render(); }
+      if (li.vtCfg) {   // VTherm déverrouillé : reverrouiller
+        if (li.code) { this._lkErr = false; this._sheet = "lock"; this._lkAction = "lock"; return this._renderSheet(); }
+        return this._vtLock(true);
+      }
+    }
+    _vtLock(locked, code) {
+      if (!this._hass) return Promise.resolve(false);
+      const data = { entity_id: this._config.entity };
+      if (code) data.code = String(code);
+      this._lkOpt = { locked, ts: Date.now() };
+      this._render();
+      return Promise.resolve(this._hass.callService("versatile_thermostat", locked ? "lock" : "unlock", data))
+        .then(() => true)
+        .catch(() => { this._lkOpt = null; this._render(); return false; });
+    }
+    _renderLockSheet(box) {
+      const $ = this.$;
+      $("sheet-t").textContent = tr("lk_title");
+      box.dataset.n = 1;
+      box.innerHTML = `<div class="lkf"><input id="lkc" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="${tr("lk_code")}">
+        <button class="opt on" id="lkgo"><ha-icon icon="${this._lkAction === "lock" ? "mdi:lock" : "mdi:lock-open-variant"}"></ha-icon><span>${tr(this._lkAction === "lock" ? "lk_lock" : "lk_unlock")}</span></button>
+        ${this._lkErr ? `<div class="lkerr">${tr("lk_bad")}</div>` : ""}</div>`;
+      const inp = box.querySelector("#lkc");
+      const go = () => {
+        const code = inp.value.trim();
+        if (!code) return inp.focus();
+        this._vtLock(this._lkAction === "lock", code).then((ok) => {
+          if (ok) { this._closeSheet(); return; }
+          this._lkErr = true;
+          if (this._sheet === "lock") this._renderLockSheet(box);
+        });
+      };
+      box.querySelector("#lkgo").addEventListener("click", go);
+      inp.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
+      this._card.classList.add("sheet-open");
+      setTimeout(() => inp.focus(), 50);
+    }
+    _renderLock() {
+      const li = this._lockInfo(), b = this.$("lockb");
+      b.style.display = li.shown ? "" : "none";
+      this._card.classList.toggle("locked", li.blocked);
+      if (!li.shown) return;
+      const open = !li.vtLocked && !li.localLocked;
+      b.classList.toggle("open", open);
+      this.$("locki").setAttribute("icon", open ? "mdi:lock-open-variant" : "mdi:lock");
+      const secs = li.local && open && this._unlockUntil ? Math.max(0, Math.ceil((this._unlockUntil - Date.now()) / 1000)) : 0;
+      this.$("lockt").textContent = secs ? secs + " s" : "";
+      if (secs) { clearTimeout(this._lkTick); this._lkTick = setTimeout(() => this._renderLock(), 1000); }
+      b.title = li.vtLocked ? tr("lk_vt") : li.localLocked ? tr("lk_locked") : li.local ? tr("lk_local_open") : tr("lk_vt_open");
+      b.setAttribute("aria-label", b.title);
+    }
     _vtOn() { return !!(this._config.vtherm && this._so && HolmClimateCard.isVTherm(this._so.attributes)); }
     _vtCall(service, data) {
       if (this._hass) this._hass.callService("versatile_thermostat", service, { entity_id: this._config.entity, ...data });
@@ -650,7 +747,7 @@
         motCfg: !!a.is_motion_configured, motion: isOn(pick(mm, "motion_state")),
         powCfg: !!a.is_power_configured, overpower: isOn(pick(pw, "overpowering_state")) || a.preset_mode === "power",
         safety: isOn(pick(sm, "safety_state")) || isOn(a.security_state) || ["safety", "security"].includes(a.preset_mode),
-        locked: a.is_locked === true,
+        locked: this._lockInfo().vtLocked,
         timed: tp.is_active === true || tp.is_active === "on" ? { preset: tp.preset, remaining, original: tp.original_preset } : null,
         offReason: pick(sp, "hvac_off_reason"), modeReason: pick(sp, "hvac_mode_reason"),
         inhibited: !!(sp.inhibition && sp.inhibition.inhibited === true), inhBypass: this._inhSwitch() ? this._hass.states[this._inhSwitch()]?.state === "on" : false,
@@ -719,6 +816,7 @@
       return this._val("state") === "fan_only" && this._target() == null && this._so && (this._so.attributes.fan_modes || []).length > 0;
     }
     _nudge(dir) {
+      if (this._guard()) return;
       if (this._fanOnly()) {
         const list = this._so.attributes.fan_modes, i = list.indexOf(this._val("fan_mode"));
         const n = list[clamp((i < 0 ? 0 : i) + dir, 0, list.length - 1)];
@@ -753,6 +851,7 @@
         return;
       }
       card.classList.remove("unavail");
+      this._renderLock();
       const a = so.attributes;
       const mode = this._val("state");
       const meta = MODE_META[mode] || MODE_META.off;
@@ -813,7 +912,7 @@
 
       this._renderModes(mode, a.hvac_modes || []);
       this._renderChips(a);
-      if (this._sheet) this._renderSheet();
+      if (this._sheet && this._sheet !== "lock") this._renderSheet();
     }
 
     disconnectedCallback() { if (this._tick) { clearInterval(this._tick); this._tick = null; } }
@@ -849,7 +948,6 @@
         }
         if (vt.presCfg) out.push(vt.present ? pill("ok", "mdi:home-account", "", tr("p_present_t")) : pill("warn", "mdi:home-export-outline", tr("p_away"), tr("p_away_t")));
         if (vt.motCfg) out.push(vt.motion ? pill("ok", "mdi:motion-sensor", tr("p_motion"), tr("p_motion_t")) : pill("dim", "mdi:motion-sensor-off", "", tr("p_no_motion_t")));
-        if (vt.locked) out.push(pill("info", "mdi:lock", tr("p_locked"), tr("p_locked_t")));
       }
       for (const id of (this._config.badges || []).slice(0, 4)) {
         const st = this._hass && this._hass.states[id];
@@ -961,7 +1059,7 @@
         b.title = full;
         b.innerHTML = `<ha-icon icon="${mm.icon}"></ha-icon><span>${modeLabel(m)}</span>`;
         b.addEventListener("click", () => {
-          if (m === this._val("state")) return;
+          if (m === this._val("state") || this._guard()) return;
           this._set("state", m);
           this._call("set_hvac_mode", { hvac_mode: m });
           this._render();
@@ -1014,13 +1112,14 @@
         b.className = "chip" + (d.hot ? " hot" : "") + (d.spin ? " fan" : "");
         b.title = d.title;
         b.innerHTML = `<ha-icon icon="${d.icon}"></ha-icon><span>${d.label}</span>`;
-        b.addEventListener("click", () => { this._sheet = d.key; this._renderSheet(); });
+        b.addEventListener("click", () => { if (this._guard()) return; this._sheet = d.key; this._renderSheet(); });
         box.appendChild(b);
       });
     }
 
     _renderSheet() {
       const $ = this.$;
+      if (this._sheet === "lock") return this._renderLockSheet($("opts"));
       if (this._sheet === "why") {
         if (!this._vtOn()) return this._closeSheet();
         $("sheet-t").textContent = tr("why");
@@ -1214,6 +1313,20 @@
       /* ---------- layout ---------- */
       .wrap { position: relative; padding: 12px 12px 12px; display: flex; flex-direction: column; gap: 6px; height: 100%; box-sizing: border-box; }
       .head { display: flex; align-items: center; gap: 9px; min-width: 0; cursor: pointer; }
+      .lockb { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 3px; height: 30px; min-width: 30px; padding: 0 7px; margin-left: auto; border: 0; border-radius: 10px; cursor: pointer;
+        color: rgb(255,196,92); background: rgba(255,196,92,.14); box-shadow: inset 0 0 0 1px rgba(255,196,92,.3); font: 600 12px inherit; font-variant-numeric: tabular-nums; }
+      .lockb.open { color: var(--tx2); background: rgba(255,255,255,.06); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); }
+      .lockb ha-icon { --mdc-icon-size: 17px; }
+      ha-card[data-layout] .lockb:not([style*="none"]) + .hcur { margin-left: 0; }
+      .lockb.nudge { animation: lknudge .45s ease; }
+      @keyframes lknudge { 20%,60% { transform: translateX(-3px) scale(1.08); } 40%,80% { transform: translateX(3px) scale(1.08); } }
+      ha-card.locked .modes, ha-card.locked .chips, ha-card.locked .step, ha-card.locked .cstep, ha-card.locked #knob { opacity: .45; filter: saturate(.5); }
+      ha-card.locked .dialbox > svg { touch-action: pan-y; }
+      .lkf { display: flex; flex-direction: column; gap: 10px; grid-column: 1 / -1; }
+      .lkf input { height: 42px; padding: 0 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.06); color: inherit; font: 600 18px inherit; letter-spacing: .3em; text-align: center; outline: none; }
+      .lkf input::placeholder { letter-spacing: normal; font-size: 14px; font-weight: 500; }
+      .lkf input:focus { border-color: rgba(var(--m), .7); }
+      .lkerr { color: rgb(255,110,110); font-size: 12px; text-align: center; }
       .badge {
         flex: 0 0 34px; width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center;
         background: rgba(var(--m), .16); color: rgb(var(--m));
@@ -1534,6 +1647,12 @@
             ],
           },
           { name: "badges", selector: { entity: { multiple: true } } },
+          {
+            type: "grid", name: "", schema: [
+              { name: "lock", selector: { boolean: {} } },
+              { name: "lock_delay", selector: { number: { min: 5, max: 600, step: 5, mode: "box", unit_of_measurement: "s" } } },
+            ],
+          },
         ];
         this._base = f.schema;
         f.computeLabel = (s) => (has("e_" + s.name) ? tr("e_" + s.name) : s.name);
@@ -1543,6 +1662,7 @@
           for (const k of ["min_temp", "max_temp", "temperature_sensor", "name", "icon"]) if (v[k] === "" || v[k] == null) delete v[k];
           if (v.layout === "full") delete v.layout;
           if (Number(v.graph_hours) === 24) delete v.graph_hours;
+          if (!v.lock) { delete v.lock; delete v.lock_delay; } else if (v.lock_delay == null || v.lock_delay === "" || Number(v.lock_delay) === 30) delete v.lock_delay;
           if (!v.vtherm) { delete v.vtherm; delete v.vtherm_info; delete v.vtherm_inhibition_bypass; delete v.vtherm_auto_start_stop; }
           if (Array.isArray(v.vtherm_info) && ["heat", "power", "ext", "bar"].every((k) => v.vtherm_info.includes(k)) && v.vtherm_info.length === 4) delete v.vtherm_info;
           for (const k of ["vtherm_inhibition_bypass", "vtherm_auto_start_stop"]) if (!v[k]) delete v[k];
@@ -1571,7 +1691,7 @@
         this._form.schema = isVt ? [...this._base, { name: "vtherm", selector: { boolean: {} } }, ...(vtOn ? vtExtra : [])] : this._base;
       }
       this._form.hass = this._hass;
-      this._form.data = { show_fan: true, show_preset: true, show_swing: true, layout: "full", graph_hours: 24, vtherm_info: ["heat", "power", "ext", "bar"], ...this._config };
+      this._form.data = { show_fan: true, show_preset: true, show_swing: true, layout: "full", graph_hours: 24, lock_delay: 30, vtherm_info: ["heat", "power", "ext", "bar"], ...this._config };
     }
   }
 

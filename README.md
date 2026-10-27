@@ -24,6 +24,8 @@ HOLM Climate Card remplace la carte thermostat pour vos entités `climate` (clim
 - 🔒 **Consignes mini / maxi** : bornez la roue et les boutons (ex. 18 à 23 °C).
 - 🏷️ **Pastilles d'état** (`badges`) : jusqu'à 4 entités affichées sous le nom (fenêtre, présence, humidité…), pour n'importe quel thermostat.
 - 🧠 **Option Versatile Thermostat** (`vtherm: true`) : fenêtre ouverte (bypass au toucher), présence, mouvement, délestage, sécurité, défaut de chauffe, **inhibition**, **auto-start/stop**, verrou, raison de l'arrêt, **minuteur de préréglage** avec décompte, taux de chauffe et température extérieure (au choix). Désactivée par défaut : la carte reste simple.
+- 🔐 **Verrouillage** : le verrou de Versatile Thermostat est respecté (commandes grisées, cadenas pour déverrouiller, code si besoin), et une option **anti-erreur** verrouille les commandes de n'importe quel thermostat contre les changements involontaires en faisant défiler la page.
+- 🌍 **Français, allemand, anglais** selon la langue de Home Assistant (français par défaut).
 - 👆 Un toucher sur le nom ouvre la fiche de l'appareil dans Home Assistant ; un toucher sur la température ouvre son historique.
 
 | Deux côte à côte (chauffage / clim) | Pleine largeur |
@@ -42,7 +44,18 @@ HOLM Climate Card remplace la carte thermostat pour vos entités `climate` (clim
 |---|---|
 | ![Volet de choix](docs/images/choix.png) | ![Historique](docs/images/graphique.png) |
 
-### 🆕 Nouveautés de la 1.4.0
+### 🆕 Nouveautés de la 1.5.0
+
+**Verrouillage** : thermostat verrouillé par Versatile Thermostat, saisie du code, verrou anti-erreur de la carte et déverrouillé
+
+![Verrouillage](docs/images/verrouillage.png)
+
+- 🔐 **Verrou de Versatile Thermostat** ([#7](https://github.com/kaaribou/climate-card-holm/issues/7)) : quand le VTherm est verrouillé, la roue, les boutons, les modes et les préréglages sont grisés ; le cadenas déverrouille (avec le code s'il y en a un) et reverrouille.
+- 🛡️ **Verrou anti-erreur** (`lock: true`) pour tout thermostat : un toucher sur le cadenas débloque les commandes quelques secondes (`lock_delay`, 30 s par défaut). Verrouillée, la roue laisse défiler la page.
+- 🌍 **Traductions allemand et anglais** ([#8](https://github.com/kaaribou/climate-card-holm/pull/8), merci à [@hco](https://github.com/hco)) : la carte suit la langue de Home Assistant, le français reste la langue par défaut.
+- 🐛 La carte fonctionne dans **expander-card / Streamline** ([#9](https://github.com/kaaribou/climate-card-holm/issues/9)).
+
+### Nouveautés de la 1.4.0
 
 **Pourquoi cet état ?** (Versatile Thermostat) et volets qui tiennent toujours dans la carte, même en demi-largeur sur mobile
 
@@ -111,6 +124,8 @@ Dans un tableau de bord en sections, la carte prend par défaut une demi-largeur
 | `temperature_sensor` | Sonde de température affichée (sinon celle de l'appareil) | — |
 | `graph_hours` | Durée du graphique à l'ouverture (heures) | `24` |
 | `badges` | Liste d'entités affichées en pastilles (4 au maximum) | — |
+| `lock` | Verrou anti-erreur : commandes bloquées tant qu'on n'a pas touché le cadenas | `false` |
+| `lock_delay` | Durée du déverrouillage (secondes) | `30` |
 | `vtherm` | Fonctions Versatile Thermostat (proposé dans l'éditeur seulement pour une entité VTherm) | `false` |
 | `vtherm_info` | Informations sous les commandes : `heat` (taux de chauffe), `power` (puissance moyenne), `ext` (température extérieure), `bar` (barre de chauffe) | toutes |
 | `vtherm_inhibition_bypass` | Interrupteur de bypass de l'inhibition (fourni par votre plugin d'inhibition) | — |
@@ -135,6 +150,19 @@ max_temp: 24
 ```
 
 Un toucher sur la **température actuelle** ouvre l'historique : température (ou sonde), consigne en pointillés, périodes de chauffe et de clim, minimum / maximum / moyenne et durée de fonctionnement.
+
+### Verrouillage
+
+```yaml
+type: custom:holm-climate-card
+entity: climate.chambre
+lock: true
+lock_delay: 20
+```
+
+Le cadenas apparaît dans l'entête. Verrouillée, la carte reste lisible mais ses commandes sont grisées ; un toucher sur une commande fait trembler le cadenas. Un toucher sur le cadenas débloque la carte pendant `lock_delay` secondes (décompte affiché), un second toucher la reverrouille tout de suite.
+
+Avec un VTherm dont le verrouillage est configuré, le cadenas suit **le verrou de Versatile Thermostat** (voir plus bas), même sans l'option `lock`.
 
 ### Pastilles d'état
 
@@ -169,13 +197,13 @@ vtherm: true
 | ⚡ **Délestage** | Pastille rouge et bordure de la carte rouge quand le chauffage est délesté. |
 | 🛡️ **Sécurité** | Sonde muette : chauffe de sécurité, signalée en rouge. |
 | 🩺 **Défaut de chauffe** | Défaut de chauffage ou de refroidissement détecté, signalé en rouge. |
-| 🔒 **Verrou** | Thermostat verrouillé. |
+| 🔒 **Verrou** | Quand le verrouillage du VTherm bloque les utilisateurs, les commandes sont grisées. Le cadenas de l'entête déverrouille (`versatile_thermostat.unlock`, avec le **code** s'il est configuré) ou reverrouille. Le reverrouillage automatique de VTherm est respecté. |
 | 💬 **Raison** | Sous le nom, en français : pourquoi le thermostat est arrêté (fenêtre, auto-start/stop, inhibition, mode central…), ou le décompte du minuteur. |
 | ℹ️ **Pourquoi cet état ?** | Un toucher sur la ligne d'état (icône ⓘ) ouvre la liste complète des messages du VTherm, traduits : raison de l'arrêt, consigne appliquée (fenêtre, délestage, absence, mode central…), appareil indisponible, initialisation, bypass, défauts. |
 | ⏱️ **Minuteur** | Puce **Minuteur** : choisissez un préréglage (boost, confort…) et une durée (30 min à 4 h) ; le décompte s'affiche et le préréglage précédent revient tout seul. **Annuler** à tout moment. |
 | 🔥 **Chauffe** | Taux de chauffe du cycle en cours, puissance moyenne, température extérieure et barre de chauffe — chacun à afficher ou non (`vtherm_info`). |
 
-En pleine largeur, les pastilles se placent à droite du nom pour gagner de la hauteur. Seuls les éléments configurés dans votre VTherm sont affichés. Les préréglages Hors-gel, Délestage et Sécurité de VTherm ont leur icône et leur nom en français.
+En pleine largeur, les pastilles se placent à droite du nom pour gagner de la hauteur. Seuls les éléments configurés dans votre VTherm sont affichés. Les préréglages Hors-gel, Délestage et Sécurité de VTherm ont leur icône et leur nom traduit.
 
 > Ces fonctions ont été développées à partir de la documentation de Versatile Thermostat et testées avec des états simulés. Un retour d'utilisateur VTherm est le bienvenu dans les [issues](https://github.com/kaaribou/climate-card-holm/issues).
 
@@ -189,6 +217,8 @@ En pleine largeur, les pastilles se placent à droite du nom pour gagner de la h
 | Les animations ne se lancent pas | Elles ne tournent que quand l'appareil **chauffe ou refroidit réellement** (`hvac_action`). En veille, la lueur reste apaisée. Elles sont aussi coupées si votre système demande de réduire les animations. |
 | La consigne revient en arrière | L'appareil n'a pas accepté la valeur (hors plage min / max) : la carte réaffiche la valeur réelle au bout d'une vingtaine de secondes. |
 | L'option Versatile Thermostat n'apparaît pas | L'entité n'est pas reconnue comme un VTherm (attributs `is_window_configured`, `specific_states`… absents). Vous pouvez quand même ajouter `vtherm: true` en YAML. |
+| La carte reste sur « Loading… » dans expander-card | Corrigé en 1.5.0 : mettez la carte à jour. |
+| La carte n'est pas dans ma langue | Elle suit la langue de votre profil Home Assistant : français, allemand ou anglais (français pour les autres langues). |
 | La nouvelle version ne s'affiche pas | Videz le cache (Ctrl + F5, ou « Recharger les ressources » dans l'application mobile). |
 
 ---
