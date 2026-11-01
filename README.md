@@ -4,6 +4,8 @@
 ![Version](https://img.shields.io/github/v/release/kaaribou/climate-card-holm)
 ![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2025.1%2B-03a9f4)
 
+🇫🇷 Français · [🇬🇧 English](README.en.md)
+
 **Une carte clim / chauffage compacte et vivante : on voit tout de suite si ça chauffe, si ça refroidit, et on règle la consigne d'un geste.**
 
 HOLM Climate Card remplace la carte thermostat pour vos entités `climate` (climatiseurs, pompes à chaleur, radiateurs connectés…). Elle tient à **deux côte à côte sur un téléphone**, s'étale joliment en **pleine largeur**, et son ambiance change selon ce que fait l'appareil : **braises** qui montent quand il chauffe, **flocons** quand il refroidit, brume grise qui respire quand il est éteint.
@@ -25,7 +27,7 @@ HOLM Climate Card remplace la carte thermostat pour vos entités `climate` (clim
 - 🏷️ **Pastilles d'état** (`badges`) : jusqu'à 4 entités affichées sous le nom (fenêtre, présence, humidité…), pour n'importe quel thermostat.
 - 🧠 **Option Versatile Thermostat** (`vtherm: true`) : fenêtre ouverte (bypass au toucher), présence, mouvement, délestage, sécurité, défaut de chauffe, **inhibition**, **auto-start/stop**, verrou, raison de l'arrêt, **minuteur de préréglage** avec décompte, taux de chauffe et température extérieure (au choix). Désactivée par défaut : la carte reste simple.
 - 🔐 **Verrouillage** : le verrou de Versatile Thermostat est respecté (commandes grisées, cadenas pour déverrouiller, code si besoin), et une option **anti-erreur** verrouille les commandes de n'importe quel thermostat contre les changements involontaires en faisant défiler la page.
-- 🌍 **Français, allemand, anglais** selon la langue de Home Assistant (français par défaut).
+- 🌍 **8 langues** : français, anglais, allemand, espagnol, italien, néerlandais, portugais et polonais, selon la langue de votre profil Home Assistant (anglais pour les autres langues), ou imposée avec l'option `language`.
 - 👆 Un toucher sur le nom ouvre la fiche de l'appareil dans Home Assistant ; un toucher sur la température ouvre son historique.
 
 | Deux côte à côte (chauffage / clim) | Pleine largeur |
@@ -44,7 +46,12 @@ HOLM Climate Card remplace la carte thermostat pour vos entités `climate` (clim
 |---|---|
 | ![Volet de choix](docs/images/choix.png) | ![Historique](docs/images/graphique.png) |
 
-### 🆕 Nouveautés de la 1.5.0
+### 🆕 Nouveautés de la 1.6.0
+
+- 🌍 **La carte parle 8 langues** : français, anglais, allemand, espagnol, italien, néerlandais, portugais et polonais, éditeur compris. Elle suit la langue de votre profil Home Assistant (anglais si votre langue n'est pas traduite) ; l'option `language` permet d'en imposer une. Nouveau : espagnol, italien, néerlandais, portugais et polonais, en plus du français, de l'allemand et de l'anglais.
+- Pour une langue non traduite, la carte s'affiche maintenant en anglais (auparavant en français).
+
+### Nouveautés de la 1.5.0
 
 **Verrouillage** : thermostat verrouillé par Versatile Thermostat, saisie du code, verrou anti-erreur de la carte et déverrouillé
 
@@ -113,6 +120,7 @@ Dans un tableau de bord en sections, la carte prend par défaut une demi-largeur
 
 | Option | Description | Par défaut |
 |---|---|---|
+| `language` | Langue : `fr`, `en`, `de`, `es`, `it`, `nl`, `pt`, `pl` | celle du profil |
 | `entity` | Entité `climate` (**obligatoire**) | — |
 | `name` | Nom affiché | nom de l'appareil |
 | `icon` | Icône quand l'appareil est éteint | `mdi:air-conditioner` |
@@ -198,7 +206,7 @@ vtherm: true
 | 🛡️ **Sécurité** | Sonde muette : chauffe de sécurité, signalée en rouge. |
 | 🩺 **Défaut de chauffe** | Défaut de chauffage ou de refroidissement détecté, signalé en rouge. |
 | 🔒 **Verrou** | Quand le verrouillage du VTherm bloque les utilisateurs, les commandes sont grisées. Le cadenas de l'entête déverrouille (`versatile_thermostat.unlock`, avec le **code** s'il est configuré) ou reverrouille. Le reverrouillage automatique de VTherm est respecté. |
-| 💬 **Raison** | Sous le nom, en français : pourquoi le thermostat est arrêté (fenêtre, auto-start/stop, inhibition, mode central…), ou le décompte du minuteur. |
+| 💬 **Raison** | Sous le nom, dans votre langue : pourquoi le thermostat est arrêté (fenêtre, auto-start/stop, inhibition, mode central…), ou le décompte du minuteur. |
 | ℹ️ **Pourquoi cet état ?** | Un toucher sur la ligne d'état (icône ⓘ) ouvre la liste complète des messages du VTherm, traduits : raison de l'arrêt, consigne appliquée (fenêtre, délestage, absence, mode central…), appareil indisponible, initialisation, bypass, défauts. |
 | ⏱️ **Minuteur** | Puce **Minuteur** : choisissez un préréglage (boost, confort…) et une durée (30 min à 4 h) ; le décompte s'affiche et le préréglage précédent revient tout seul. **Annuler** à tout moment. |
 | 🔥 **Chauffe** | Taux de chauffe du cycle en cours, puissance moyenne, température extérieure et barre de chauffe — chacun à afficher ou non (`vtherm_info`). |
@@ -218,7 +226,7 @@ En pleine largeur, les pastilles se placent à droite du nom pour gagner de la h
 | La consigne revient en arrière | L'appareil n'a pas accepté la valeur (hors plage min / max) : la carte réaffiche la valeur réelle au bout d'une vingtaine de secondes. |
 | L'option Versatile Thermostat n'apparaît pas | L'entité n'est pas reconnue comme un VTherm (attributs `is_window_configured`, `specific_states`… absents). Vous pouvez quand même ajouter `vtherm: true` en YAML. |
 | La carte reste sur « Loading… » dans expander-card | Corrigé en 1.5.0 : mettez la carte à jour. |
-| La carte n'est pas dans ma langue | Elle suit la langue de votre profil Home Assistant : français, allemand ou anglais (français pour les autres langues). |
+| La carte n'est pas dans ma langue | Elle suit la langue de votre profil Home Assistant (8 langues, anglais pour les autres) ; l'option `language` permet d'en imposer une. Ouvrez une issue pour proposer une traduction. |
 | La nouvelle version ne s'affiche pas | Videz le cache (Ctrl + F5, ou « Recharger les ressources » dans l'application mobile). |
 
 ---

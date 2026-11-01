@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.0
+- **8 langues** : français, anglais, allemand, espagnol, italien, néerlandais, portugais et polonais, pour la carte, son éditeur visuel et le graphique : espagnol, italien, néerlandais, portugais et polonais ajoutés. Elle suit la langue du profil Home Assistant ; pour une langue non traduite, elle s'affiche en anglais (auparavant en français). Nouvelle option `language`, aussi réglable dans l'éditeur.
+- README en anglais (`README.en.md`).
+
 ## 1.5.0
 - **Verrou de Versatile Thermostat** ([#7](https://github.com/kaaribou/climate-card-holm/issues/7)) : lu dans `lock_manager` (VTherm récent). Verrouillé pour les utilisateurs, la roue, les boutons, les modes, les préréglages et les pastilles actives sont grisés et bloqués ; le cadenas de l'entête appelle `versatile_thermostat.unlock` / `lock`, avec saisie du **code** quand VTherm en demande un (« Code refusé » si erroné).
 - **Verrou anti-erreur** (`lock: true`, `lock_delay`) pour n'importe quel thermostat : commandes bloquées jusqu'à un toucher sur le cadenas, puis débloquées quelques secondes avec décompte. Verrouillée, la roue laisse défiler la page sur mobile.
