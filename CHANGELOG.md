@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.7.0
+- **Thème clair** ([#12](https://github.com/kaaribou/climate-card-holm/issues/12)) : nouvelle option `theme` (`auto` par défaut, `dark`, `light`), aussi dans l'éditeur. En `auto`, la carte suit le mode clair ou sombre de Home Assistant ; volets, fenêtres et graphique de l'historique suivent aussi. Pour garder la carte toujours sombre : `theme: dark`.
+- **Préréglages masqués** ([#10](https://github.com/kaaribou/climate-card-holm/issues/10)) : nouvelle option `hidden_presets` (choix dans l'éditeur parmi les préréglages du thermostat), par exemple `none` pour ne plus proposer **Normal**. Un préréglage masqué reste affiché s'il est actif (le thermostat y est passé tout seul) ; il n'est plus proposé non plus dans le minuteur Versatile Thermostat.
+- **« En veille » au lieu de « Éteint »** ([#11](https://github.com/kaaribou/climate-card-holm/issues/11)) dans l'entête quand le thermostat est en chauffe (ou clim) mais ne chauffe pas : Versatile Thermostat signale alors l'activité « off ».
+
 ## 1.6.0
 - **8 langues** : français, anglais, allemand, espagnol, italien, néerlandais, portugais et polonais, pour la carte, son éditeur visuel et le graphique : espagnol, italien, néerlandais, portugais et polonais ajoutés. Elle suit la langue du profil Home Assistant ; pour une langue non traduite, elle s'affiche en anglais (auparavant en français). Nouvelle option `language`, aussi réglable dans l'éditeur.
 - README en anglais (`README.en.md`).

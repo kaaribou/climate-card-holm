@@ -46,7 +46,15 @@ HOLM Climate Card remplace la carte thermostat pour vos entités `climate` (clim
 |---|---|
 | ![Volet de choix](docs/images/choix.png) | ![Historique](docs/images/graphique.png) |
 
-### 🆕 Nouveautés de la 1.6.0
+### 🆕 Nouveautés de la 1.7.0
+
+- 🌗 **Thème clair** ([#12](https://github.com/kaaribou/climate-card-holm/issues/12)) : la carte suit le mode clair ou sombre de Home Assistant (option `theme` : `auto`, `dark` ou `light`), fenêtres et graphique compris.
+- 🙈 **Préréglages masqués** ([#10](https://github.com/kaaribou/climate-card-holm/issues/10)) : option `hidden_presets`, par exemple `none` pour ne plus proposer le mode **Normal**. Si le thermostat y passe tout seul, la carte l'affiche quand même.
+- 💤 **« En veille » au lieu de « Éteint »** ([#11](https://github.com/kaaribou/climate-card-holm/issues/11)) quand le thermostat est en chauffe mais ne chauffe pas (consigne atteinte).
+
+![Thème clair](docs/images/theme-clair.png)
+
+### Nouveautés de la 1.6.0
 
 - 🌍 **La carte parle 8 langues** : français, anglais, allemand, espagnol, italien, néerlandais, portugais et polonais, éditeur compris. Elle suit la langue de votre profil Home Assistant (anglais si votre langue n'est pas traduite) ; l'option `language` permet d'en imposer une. Nouveau : espagnol, italien, néerlandais, portugais et polonais, en plus du français, de l'allemand et de l'anglais.
 - Pour une langue non traduite, la carte s'affiche maintenant en anglais (auparavant en français).
@@ -128,6 +136,8 @@ Dans un tableau de bord en sections, la carte prend par défaut une demi-largeur
 | `show_preset` | Puce **Préréglage** (boost, absence, éco…) | `true` |
 | `show_swing` | Puces **Oscillation** verticale et horizontale | `true` |
 | `layout` | `full` (avec la roue) ou `compact` (en largeur, sans la roue) | `full` |
+| `theme` | `auto` (suit le mode clair / sombre de Home Assistant), `dark` ou `light` | `auto` |
+| `hidden_presets` | Préréglages à ne plus proposer, ex. `[none]` pour masquer **Normal** | — |
 | `min_temp` / `max_temp` | Consigne minimum / maximum autorisée (dans les limites de l'appareil) | limites de l'appareil |
 | `temperature_sensor` | Sonde de température affichée (sinon celle de l'appareil) | — |
 | `graph_hours` | Durée du graphique à l'ouverture (heures) | `24` |
@@ -245,4 +255,4 @@ Code : licence **MIT** — © kaaribou. Voir le [CHANGELOG](CHANGELOG.md).
 
 Fait partie de **HOLM — Home Orchestration & Living Management** : la gestion et l'orchestration intelligente de la maison.
 
-Les autres projets : [Volets HOLM](https://github.com/kaaribou/volets-holm) · [Climat HOLM](https://github.com/kaaribou/climat-holm) · [Carburant HOLM](https://github.com/kaaribou/carburant-holm) · [Commandes à la maison HOLM](https://github.com/kaaribou/commandes-holm) · [HOLM LaMetric](https://github.com/kaaribou/lametric-holm) · [HOLM My Menu](https://github.com/kaaribou/holm-mymenu) · [HOLM Lektrico](https://github.com/kaaribou/lektrico-holm) · [HOLM Navbar Card](https://github.com/kaaribou/holm-navbar-card) · [HOLM Music Card](https://github.com/kaaribou/holm-music-card) · [HOLM Sentinel Card](https://github.com/kaaribou/holm-sentinel-card) · [HOLM Security Card](https://github.com/kaaribou/holm-security-card) · [HOLM Recordings Card](https://github.com/kaaribou/holm-recordings-card) · [HOLM Covers Card](https://github.com/kaaribou/holm-covers-card) · [HOLM Runtime Card](https://github.com/kaaribou/holm-runtime-card) · [HOLM Power Flow Card](https://github.com/kaaribou/holm-power-flow-card) · [HOLM Energy Cards](https://github.com/kaaribou/holm-energy-cards) · [HOLM Radiator Card](https://github.com/kaaribou/holm-radiator-card) · [HOLM Floor Card](https://github.com/kaaribou/holm-floor-card) · [HOLM Ecojoko Card](https://github.com/kaaribou/holm-ecojoko-card) · [HOLM Smoke Card](https://github.com/kaaribou/holm-smoke-card) · [HOLM BG Card](https://github.com/kaaribou/holm-bg-card).
+Les autres projets : [Volets HOLM](https://github.com/kaaribou/volets-holm) · [Climat HOLM](https://github.com/kaaribou/climat-holm) · [Carburant HOLM](https://github.com/kaaribou/carburant-holm) · [Commandes à la maison HOLM](https://github.com/kaaribou/commandes-holm) · [HOLM LaMetric](https://github.com/kaaribou/lametric-holm) · [HOLM My Menu](https://github.com/kaaribou/holm-mymenu) · [HOLM Lektrico](https://github.com/kaaribou/lektrico-holm) · [HOLM Navbar Card](https://github.com/kaaribou/holm-navbar-card) · [HOLM Music Card](https://github.com/kaaribou/holm-music-card) · [HOLM Sentinel Card](https://github.com/kaaribou/holm-sentinel-card) · [HOLM Security Card](https://github.com/kaaribou/holm-security-card) · [HOLM Recordings Card](https://github.com/kaaribou/holm-recordings-card) · [HOLM Covers Card](https://github.com/kaaribou/holm-covers-card) · [HOLM Runtime Card](https://github.com/kaaribou/holm-runtime-card) · [HOLM Power Flow Card](https://github.com/kaaribou/holm-power-flow-card) · [HOLM Energy Cards](https://github.com/kaaribou/holm-energy-cards) · [HOLM Radiator Card](https://github.com/kaaribou/holm-radiator-card) · [HOLM Floor Card](https://github.com/kaaribou/holm-floor-card) · [HOLM Ecojoko Card](https://github.com/kaaribou/holm-ecojoko-card) · [HOLM Smoke Card](https://github.com/kaaribou/holm-smoke-card) · [HOLM BG Card](https://github.com/kaaribou/holm-bg-card) · [HOLM Cars](https://github.com/kaaribou/holm-cars).

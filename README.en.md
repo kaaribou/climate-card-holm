@@ -48,7 +48,15 @@ HOLM Climate Card replaces the thermostat card for your `climate` entities (air 
 |---|---|
 | ![Choice panel](docs/images/choix.png) | ![History](docs/images/graphique.png) |
 
-### 🆕 What's new in 1.6.0
+### 🆕 What's new in 1.7.0
+
+- 🌗 **Light theme** ([#12](https://github.com/kaaribou/climate-card-holm/issues/12)): the card follows Home Assistant's light or dark mode (`theme` option: `auto`, `dark` or `light`), panels and graph included.
+- 🙈 **Hidden presets** ([#10](https://github.com/kaaribou/climate-card-holm/issues/10)): `hidden_presets` option, e.g. `none` to stop offering the **Normal** mode. If the thermostat switches to it by itself, the card still shows it.
+- 💤 **"Idle" instead of "Off"** ([#11](https://github.com/kaaribou/climate-card-holm/issues/11)) when the thermostat is in heat mode but not heating (setpoint reached).
+
+![Light theme](docs/images/theme-clair.png)
+
+### What's new in 1.6.0
 
 - 🌍 **The card speaks 8 languages**: English, French, German, Spanish, Italian, Dutch, Portuguese and Polish, editor and graph included. New: Spanish, Italian, Dutch, Portuguese and Polish, on top of French, German and English. It follows the language of your Home Assistant profile; the `language` option lets you force one.
 - For a language not translated yet, the card now shows in English (previously in French).
@@ -130,6 +138,8 @@ In a sections dashboard, the card takes half the width by default: **two cards p
 | `show_preset` | **Preset** chip (boost, away, eco…) | `true` |
 | `show_swing` | Vertical and horizontal **Swing** chips | `true` |
 | `layout` | `full` (with the dial) or `compact` (wide, without the dial) | `full` |
+| `theme` | `auto` (follows Home Assistant's light / dark mode), `dark` or `light` | `auto` |
+| `hidden_presets` | Presets not to offer, e.g. `[none]` to hide **Normal** | — |
 | `min_temp` / `max_temp` | Minimum / maximum allowed setpoint (within the device's limits) | device limits |
 | `temperature_sensor` | Temperature sensor shown (otherwise the device's own) | — |
 | `graph_hours` | Graph duration when opened (hours) | `24` |

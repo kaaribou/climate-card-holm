@@ -20,7 +20,7 @@
  * - Pastilles d'état configurables (badges) pour n'importe quel thermostat
  */
 (() => {
-  const VERSION = "1.6.0";
+  const VERSION = "1.7.0";
   // ---------- textes (fr = comportement d'origine, langue choisie d'après Home Assistant) ----------
   const I18N = {
     fr: {
@@ -89,6 +89,7 @@
       e_vtherm: "Fonctions Versatile Thermostat (fenêtre, présence, délestage, minuteur…)", e_vtherm_info: "Informations sous les commandes",
       e_vtherm_inhibition_bypass: "Interrupteur de bypass de l'inhibition (plugin d'inhibition)", e_vtherm_auto_start_stop: "Interrupteur auto-start/stop (automatique si vide)",
       e_layout_full: "Complète (avec la roue)", e_layout_compact: "Compacte (en largeur, sans la roue)",
+      e_theme: "Thème", e_theme_auto: "Automatique (comme Home Assistant)", e_theme_dark: "Sombre", e_theme_light: "Clair", e_hidden_presets: "Préréglages masqués",
       e_info_heat: "Taux de chauffe (%)", e_info_power: "Puissance moyenne (W)", e_info_ext: "Température extérieure", e_info_bar: "Barre de chauffe",
       g_temp: "Température", g_sensor: " · sonde", g_loading: "Chargement…", g_error: "Historique indisponible : {0}", g_nodata: "Aucune donnée de température sur cette période.",
       g_current: "Actuelle", g_min: "Min", g_max: "Max", g_avg: "Moyenne", g_heat: "Chauffe", g_cool: "Clim", g_setpoint: "consigne {0}°",
@@ -161,6 +162,7 @@
       e_vtherm: "Versatile-Thermostat-Funktionen (Fenster, Anwesenheit, Lastabwurf, Timer…)", e_vtherm_info: "Infos unter den Bedienelementen",
       e_vtherm_inhibition_bypass: "Schalter für den Bypass der Aussetzung (Inhibition-Plugin)", e_vtherm_auto_start_stop: "Auto-Start/Stopp-Schalter (automatisch, wenn leer)",
       e_layout_full: "Vollständig (mit Drehregler)", e_layout_compact: "Kompakt (breit, ohne Drehregler)",
+      e_theme: "Design", e_theme_auto: "Automatisch (wie Home Assistant)", e_theme_dark: "Dunkel", e_theme_light: "Hell", e_hidden_presets: "Ausgeblendete Voreinstellungen",
       e_info_heat: "Heizrate (%)", e_info_power: "Mittlere Leistung (W)", e_info_ext: "Außentemperatur", e_info_bar: "Heizbalken",
       g_temp: "Temperatur", g_sensor: " · Sensor", g_loading: "Wird geladen…", g_error: "Verlauf nicht verfügbar: {0}", g_nodata: "Keine Temperaturdaten in diesem Zeitraum.",
       g_current: "Aktuell", g_min: "Min", g_max: "Max", g_avg: "Mittel", g_heat: "Heizen", g_cool: "Kühlen", g_setpoint: "Sollwert {0}°",
@@ -233,6 +235,7 @@
       e_vtherm: "Versatile Thermostat features (window, presence, load shedding, timer…)", e_vtherm_info: "Information below the controls",
       e_vtherm_inhibition_bypass: "Inhibition bypass switch (inhibition plugin)", e_vtherm_auto_start_stop: "Auto-start/stop switch (automatic if empty)",
       e_layout_full: "Full (with dial)", e_layout_compact: "Compact (wide, without dial)",
+      e_theme: "Theme", e_theme_auto: "Automatic (follows Home Assistant)", e_theme_dark: "Dark", e_theme_light: "Light", e_hidden_presets: "Hidden presets",
       e_info_heat: "Heating rate (%)", e_info_power: "Average power (W)", e_info_ext: "Outdoor temperature", e_info_bar: "Heating bar",
       g_temp: "Temperature", g_sensor: " · sensor", g_loading: "Loading…", g_error: "History unavailable: {0}", g_nodata: "No temperature data for this period.",
       g_current: "Current", g_min: "Min", g_max: "Max", g_avg: "Average", g_heat: "Heating", g_cool: "Cooling", g_setpoint: "setpoint {0}°",
@@ -412,6 +415,7 @@
       e_vtherm_auto_start_stop: "Interruptor auto-start/stop (automático si está vacío)",
       e_layout_full: "Completa (con la rueda)",
       e_layout_compact: "Compacta (a lo ancho, sin la rueda)",
+      e_theme: "Tema", e_theme_auto: "Automático (como Home Assistant)", e_theme_dark: "Oscuro", e_theme_light: "Claro", e_hidden_presets: "Preajustes ocultos",
       e_info_heat: "Tasa de calefacción (%)",
       e_info_power: "Potencia media (W)",
       e_info_ext: "Temperatura exterior",
@@ -609,6 +613,7 @@
       e_vtherm_auto_start_stop: "Interruttore auto-start/stop (automatico se vuoto)",
       e_layout_full: "Completa (con la ghiera)",
       e_layout_compact: "Compatta (in larghezza, senza ghiera)",
+      e_theme: "Tema", e_theme_auto: "Automatico (come Home Assistant)", e_theme_dark: "Scuro", e_theme_light: "Chiaro", e_hidden_presets: "Preset nascosti",
       e_info_heat: "Tasso di riscaldamento (%)",
       e_info_power: "Potenza media (W)",
       e_info_ext: "Temperatura esterna",
@@ -806,6 +811,7 @@
       e_vtherm_auto_start_stop: "Auto-start/stop-schakelaar (automatisch indien leeg)",
       e_layout_full: "Volledig (met draaiknop)",
       e_layout_compact: "Compact (breed, zonder draaiknop)",
+      e_theme: "Thema", e_theme_auto: "Automatisch (zoals Home Assistant)", e_theme_dark: "Donker", e_theme_light: "Licht", e_hidden_presets: "Verborgen voorinstellingen",
       e_info_heat: "Verwarmingsgraad (%)",
       e_info_power: "Gemiddeld vermogen (W)",
       e_info_ext: "Buitentemperatuur",
@@ -1003,6 +1009,7 @@
       e_vtherm_auto_start_stop: "Interruptor auto-start/stop (automático se vazio)",
       e_layout_full: "Completa (com a roda)",
       e_layout_compact: "Compacta (em largura, sem a roda)",
+      e_theme: "Tema", e_theme_auto: "Automático (como o Home Assistant)", e_theme_dark: "Escuro", e_theme_light: "Claro", e_hidden_presets: "Predefinições ocultas",
       e_info_heat: "Taxa de aquecimento (%)",
       e_info_power: "Potência média (W)",
       e_info_ext: "Temperatura exterior",
@@ -1200,6 +1207,7 @@
       e_vtherm_auto_start_stop: "Przełącznik auto-start/stop (automatycznie, jeśli puste)",
       e_layout_full: "Pełny (z pokrętłem)",
       e_layout_compact: "Kompaktowy (szeroki, bez pokrętła)",
+      e_theme: "Motyw", e_theme_auto: "Automatyczny (jak Home Assistant)", e_theme_dark: "Ciemny", e_theme_light: "Jasny", e_hidden_presets: "Ukryte ustawienia",
       e_info_heat: "Stopień grzania (%)",
       e_info_power: "Średnia moc (W)",
       e_info_ext: "Temperatura zewnętrzna",
@@ -1410,6 +1418,12 @@
       if (this._hass) this.hass = this._hass;
     }
     get _compact() { return this._config && this._config.layout === "compact"; }
+    // thème de la carte (#12) : option `theme` (auto | dark | light) ; auto suit le mode sombre de Home Assistant
+    _themeName() {
+      const t = this._config && this._config.theme;
+      if (t === "light" || t === "dark") return t;
+      return this._hass && this._hass.themes && this._hass.themes.darkMode === false ? "light" : "dark";
+    }
     getCardSize() {
       return this._compact ? 2 : 5;
     }
@@ -1836,6 +1850,7 @@
       const $ = this.$;
       const so = this._so;
       const card = this._card;
+      card.dataset.theme = this._themeName();
       if (!so || so.state === "unavailable") {
         card.classList.add("unavail");
         $("name").textContent = this._config.name || (so && so.attributes.friendly_name) || this._config.entity;
@@ -1868,6 +1883,7 @@
       let status;
       if (mode === "off") status = modeLabel("off");
       else if (action === "pending") status = modeLabel(mode in MODE_META ? mode : "off") + "…";
+      else if (action === "off") status = tr("act_idle");   // mode actif mais rien en cours (VTherm envoie « off ») : « En veille » (#11)
       else status = action && has("act_" + action) ? tr("act_" + action) : modeLabel(mode in MODE_META ? mode : "off");
       const vt = this._vtOn() ? this._vt() : null;
       if (vt) {
@@ -2070,7 +2086,10 @@
       if (cfg.show_preset && a.preset_modes && a.preset_modes.length) {
         const v = this._val("preset_mode") || "none";
         const m = metaOf(PRESET_META, v) || { icon: "mdi:star-outline" };
-        defs.push({ key: "preset", title: tr("preset"), icon: m.icon, label: this._lbl("preset_mode", v), hot: v !== "none", value: v, options: a.preset_modes, meta: PRESET_META, attr: "preset_mode", service: "set_preset_mode" });
+        // préréglages masqués (#10) : plus proposés, mais celui en cours reste affiché s'il est actif
+        const hidden = Array.isArray(cfg.hidden_presets) ? cfg.hidden_presets : [];
+        const opts = a.preset_modes.filter((p) => !hidden.includes(p) || p === v);
+        defs.push({ key: "preset", title: tr("preset"), icon: m.icon, label: this._lbl("preset_mode", v), hot: v !== "none", value: v, options: opts, meta: PRESET_META, attr: "preset_mode", service: "set_preset_mode" });
       }
       if (this._vtOn() && a.preset_modes && a.preset_modes.length) {
         const vt = this._vt();
@@ -2178,7 +2197,8 @@
     }
     _renderTimedSheet(box) {
       const a = this._so.attributes, vt = this._vt();
-      const presets = (a.preset_modes || []).filter((p) => !["none", "power", "safety", "security"].includes(p));
+      const hidden = Array.isArray(this._config.hidden_presets) ? this._config.hidden_presets : [];
+      const presets = (a.preset_modes || []).filter((p) => !["none", "power", "safety", "security"].includes(p) && !hidden.includes(p));
       if (!presets.includes(this._tpPreset)) this._tpPreset = presets.includes("boost") ? "boost" : presets.includes("comfort") ? "comfort" : presets[0];
       const lab = (p) => this._lbl("preset_mode", p), ic = (p) => (metaOf(PRESET_META, p) || { icon: "mdi:star-outline" }).icon;
       box.dataset.n = "timed";
@@ -2202,7 +2222,7 @@
     _openGraph() {
       let dlg = document.querySelector("holm-climate-graph");
       if (!dlg) { dlg = document.createElement("holm-climate-graph"); document.body.appendChild(dlg); }
-      dlg.open(this._hass, { lang: LANG,
+      dlg.open(this._hass, { lang: LANG, light: this._themeName() === "light",
         entity: this._config.entity,
         sensor: this._config.temperature_sensor || null,
         name: this._config.name || (this._so && this._so.attributes.friendly_name) || this._config.entity,
@@ -2223,22 +2243,23 @@
       ha-card {
         display: block;
         --m: 150,160,178;
-        /* fond toujours sombre : texte clair quel que soit le thème Home Assistant */
+        /* thème sombre par défaut ; ha-card[data-theme="light"] (plus bas) pour le thème clair */
         --tx: #e6f2f5;
         --tx2: rgba(220,235,240,.62);
+        --ov: 255,255,255;   /* teinte des voiles et bordures neutres (inversée en thème clair) */
         position: relative; overflow: hidden; box-sizing: border-box;
         container-type: inline-size;
         border-radius: var(--ha-card-border-radius, 20px);
         background: linear-gradient(160deg, rgba(20,28,38,.92), rgba(10,15,22,.96));
         border: 1px solid rgba(var(--m), .18);
-        box-shadow: 0 8px 26px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.04);
+        box-shadow: 0 8px 26px rgba(0,0,0,.35), inset 0 1px 0 rgba(var(--ov),.04);
         color: var(--tx);
         transition: border-color .6s, box-shadow .6s;
         -webkit-tap-highlight-color: transparent;
         user-select: none;
       }
       :host([fixed-rows]) ha-card { height: 100%; }
-      ha-card.active { box-shadow: 0 10px 30px rgba(0,0,0,.35), 0 0 22px -6px rgba(var(--m), .45), inset 0 1px 0 rgba(255,255,255,.05); }
+      ha-card.active { box-shadow: 0 10px 30px rgba(0,0,0,.35), 0 0 22px -6px rgba(var(--m), .45), inset 0 1px 0 rgba(var(--ov),.05); }
       button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; padding: 0; -webkit-tap-highlight-color: transparent; }
 
       /* ---------- ambiance ---------- */
@@ -2306,7 +2327,7 @@
       .head { display: flex; align-items: center; gap: 9px; min-width: 0; cursor: pointer; }
       .lockb { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 3px; height: 30px; min-width: 30px; padding: 0 7px; margin-left: auto; border: 0; border-radius: 10px; cursor: pointer;
         color: rgb(255,196,92); background: rgba(255,196,92,.14); box-shadow: inset 0 0 0 1px rgba(255,196,92,.3); font: 600 12px inherit; font-variant-numeric: tabular-nums; }
-      .lockb.open { color: var(--tx2); background: rgba(255,255,255,.06); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); }
+      .lockb.open { color: var(--tx2); background: rgba(var(--ov),.06); box-shadow: inset 0 0 0 1px rgba(var(--ov),.08); }
       .lockb ha-icon { --mdc-icon-size: 17px; }
       ha-card[data-layout] .lockb:not([style*="none"]) + .hcur { margin-left: 0; }
       .lockb.nudge { animation: lknudge .45s ease; }
@@ -2314,7 +2335,7 @@
       ha-card.locked .modes, ha-card.locked .chips, ha-card.locked .step, ha-card.locked .cstep, ha-card.locked #knob { opacity: .45; filter: saturate(.5); }
       ha-card.locked .dialbox > svg { touch-action: pan-y; }
       .lkf { display: flex; flex-direction: column; gap: 10px; grid-column: 1 / -1; }
-      .lkf input { height: 42px; padding: 0 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.06); color: inherit; font: 600 18px inherit; letter-spacing: .3em; text-align: center; outline: none; }
+      .lkf input { height: 42px; padding: 0 14px; border-radius: 12px; border: 1px solid rgba(var(--ov),.14); background: rgba(var(--ov),.06); color: inherit; font: 600 18px inherit; letter-spacing: .3em; text-align: center; outline: none; }
       .lkf input::placeholder { letter-spacing: normal; font-size: 14px; font-weight: 500; }
       .lkf input:focus { border-color: rgba(var(--m), .7); }
       .lkerr { color: rgb(255,110,110); font-size: 12px; text-align: center; }
@@ -2350,8 +2371,8 @@
       /* roue carrée de taille explicite (pas d'aspect-ratio : source de recalculs sur iOS) */
       .dialbox { position: relative; width: min(100%, 210px); height: min(calc(100cqi - 24px), 210px); margin: 0 auto; }
       .dialbox > svg { position: absolute; left: 0; top: 0; width: 100%; height: auto; overflow: visible; touch-action: none; }
-      .track { fill: none; stroke: rgba(255,255,255,.08); stroke-width: 12; stroke-linecap: round; }
-      .ticks line { stroke: rgba(255,255,255,.14); stroke-width: 1.4; stroke-linecap: round; }
+      .track { fill: none; stroke: rgba(var(--ov),.08); stroke-width: 12; stroke-linecap: round; }
+      .ticks line { stroke: rgba(var(--ov),.14); stroke-width: 1.4; stroke-linecap: round; }
       .val { fill: none; stroke-width: 12; stroke-linecap: round; filter: drop-shadow(0 0 5px rgba(var(--m), .55)); transition: d .25s; }
       ha-card[data-mode="off"] .val { filter: none; opacity: .45; }
       .cur { fill: #fff; stroke: rgba(0,0,0,.45); stroke-width: 1.5; }
@@ -2372,13 +2393,13 @@
       ha-card.fanonly .target sup, ha-card.fanonly .ctgt sup, ha-card.fanonly .cur { display: none; }
       .curtxt { display: inline-flex; align-items: center; gap: 2px; font-size: 12px; color: var(--tx2); margin-top: 2px; pointer-events: auto; padding: 2px 7px; border-radius: 9px; }
       .curbtn { cursor: pointer; transition: background .2s, color .2s; }
-      .curbtn:hover { background: rgba(255,255,255,.08); color: var(--tx); }
+      .curbtn:hover { background: rgba(var(--ov),.08); color: var(--tx); }
       .curtxt ha-icon { --mdc-icon-size: 14px; }
 
       .step {
         position: absolute; top: 88%; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%;
         display: grid; place-items: center;
-        background: rgba(255,255,255,.07); box-shadow: inset 0 0 0 1px rgba(255,255,255,.1);
+        background: rgba(var(--ov),.07); box-shadow: inset 0 0 0 1px rgba(var(--ov),.1);
         transition: background .2s, transform .1s;
       }
       .step:active { transform: scale(.9); background: rgba(var(--m), .3); }
@@ -2402,13 +2423,13 @@
       ha-card[data-layout="compact"] .chips:is([data-n="3"], [data-n="4"]) { grid-column: 1 / -1; grid-row: 3; justify-self: stretch; }
       ha-card[data-layout="compact"] .chips:is([data-n="3"], [data-n="4"]) .chip { flex: 1 1 0; min-width: 0; }
       ha-card[data-layout="compact"] .side:has(.chips:is([data-n="3"], [data-n="4"])) .modes { grid-column: 1 / -1; }
-      ha-card[data-layout="compact"] .hcur { display: inline-flex; align-items: center; gap: 3px; flex: 0 0 auto; height: 30px; padding: 0 8px; margin-left: auto; border-radius: 10px; font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; background: rgba(255,255,255,.06); box-shadow: inset 0 0 0 1px rgba(255,255,255,.07); }
+      ha-card[data-layout="compact"] .hcur { display: inline-flex; align-items: center; gap: 3px; flex: 0 0 auto; height: 30px; padding: 0 8px; margin-left: auto; border-radius: 10px; font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; background: rgba(var(--ov),.06); box-shadow: inset 0 0 0 1px rgba(var(--ov),.07); }
       ha-card[data-layout="compact"] .hcur ha-icon { --mdc-icon-size: 16px; color: var(--tx2); }
-      ha-card[data-layout="compact"] .cstep { display: flex; align-items: center; gap: 2px; padding: 3px; border-radius: 13px; background: rgba(0,0,0,.28); box-shadow: inset 0 0 0 1px rgba(255,255,255,.06); }
+      ha-card[data-layout="compact"] .cstep { display: flex; align-items: center; gap: 2px; padding: 3px; border-radius: 13px; background: rgba(0,0,0,.28); box-shadow: inset 0 0 0 1px rgba(var(--ov),.06); }
       ha-card[data-layout="compact"] .mode { height: 34px; }
       ha-card[data-layout="compact"] .mode span { display: none; }
       ha-card[data-layout="compact"] .chip { height: 34px; padding: 0 9px; flex: 0 1 auto; }
-      .cbtn { width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; background: rgba(255,255,255,.06); transition: background .2s, transform .1s; }
+      .cbtn { width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; background: rgba(var(--ov),.06); transition: background .2s, transform .1s; }
       .cbtn:active { transform: scale(.92); background: rgba(var(--m), .3); }
       .cbtn ha-icon { --mdc-icon-size: 17px; }
       .ctgt { min-width: 50px; text-align: center; font-size: 19px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
@@ -2447,7 +2468,7 @@
 
       /* ---------- modes ---------- */
       .side { display: flex; flex-direction: column; gap: 8px; }
-      .modes { display: flex; gap: 4px; padding: 3px; border-radius: 14px; background: rgba(0,0,0,.28); box-shadow: inset 0 0 0 1px rgba(255,255,255,.06); }
+      .modes { display: flex; gap: 4px; padding: 3px; border-radius: 14px; background: rgba(0,0,0,.28); box-shadow: inset 0 0 0 1px rgba(var(--ov),.06); }
       .mode {
         flex: 1 1 0; min-width: 0; height: 36px; border-radius: 11px; display: flex; align-items: center; justify-content: center; gap: 6px;
         color: var(--tx2); transition: background .3s, color .3s, box-shadow .3s;
@@ -2455,7 +2476,7 @@
       .mode ha-icon { --mdc-icon-size: 20px; flex: 0 0 auto; }
       .mode span { display: none; font-size: 12.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .mode.on { color: #fff; background: linear-gradient(180deg, rgba(var(--c), .95), rgba(var(--c), .7)); box-shadow: 0 3px 12px -2px rgba(var(--c), .6); }
-      .mode:not(.on):hover { background: rgba(255,255,255,.06); color: rgb(var(--c)); }
+      .mode:not(.on):hover { background: rgba(var(--ov),.06); color: rgb(var(--c)); }
 
       /* ---------- chips ---------- */
       .chips { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 5px; }
@@ -2463,7 +2484,7 @@
       .chips[data-n="3"] .chip:last-child { grid-column: span 2; }
       .chip {
         min-width: 0; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 4px; padding: 0 6px;
-        background: rgba(255,255,255,.06); box-shadow: inset 0 0 0 1px rgba(255,255,255,.07);
+        background: rgba(var(--ov),.06); box-shadow: inset 0 0 0 1px rgba(var(--ov),.07);
         font-size: 12px; font-weight: 600; color: var(--tx);
       }
       .chip ha-icon { --mdc-icon-size: 16px; flex: 0 0 auto; color: var(--tx2); }
@@ -2480,7 +2501,7 @@
       /* le volet ne dépasse jamais la carte : l'entête reste visible, le contenu défile */
       .sheet-in > .opts { min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
       .sheet-h { flex: 0 0 auto; }
-      .why-r { grid-column: 1 / -1; display: flex; align-items: flex-start; gap: 9px; padding: 8px 10px; border-radius: 12px; font-size: 12.5px; background: rgba(255,255,255,.05); }
+      .why-r { grid-column: 1 / -1; display: flex; align-items: flex-start; gap: 9px; padding: 8px 10px; border-radius: 12px; font-size: 12.5px; background: rgba(var(--ov),.05); }
       .why-r ha-icon { --mdc-icon-size: 18px; flex: 0 0 auto; color: var(--tx2); margin-top: 1px; }
       .why-r b { display: block; font-weight: 600; line-height: 1.3; }
       .why-r small { display: block; margin-top: 2px; font-size: 11px; color: var(--tx2); white-space: normal; }
@@ -2490,10 +2511,10 @@
       .why-r.bad { background: rgba(239,83,80,.14); } .why-r.bad ha-icon { color: rgb(255,120,115); }
       ha-card.sheet-open .sheet-in { transform: none; }
       .sheet-h { display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 700; color: var(--tx2); text-transform: uppercase; letter-spacing: .06em; margin: 0 2px 8px; }
-      .sheet-h button { width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; background: rgba(255,255,255,.07); }
+      .sheet-h button { width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; background: rgba(var(--ov),.07); }
       .sheet-h ha-icon { --mdc-icon-size: 16px; }
       .opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px; }
-      .opt { height: 34px; border-radius: 10px; display: flex; align-items: center; gap: 6px; padding: 0 8px; background: rgba(255,255,255,.05); font-size: 12.5px; font-weight: 600; min-width: 0; }
+      .opt { height: 34px; border-radius: 10px; display: flex; align-items: center; gap: 6px; padding: 0 8px; background: rgba(var(--ov),.05); font-size: 12.5px; font-weight: 600; min-width: 0; }
       .opt span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .opt ha-icon { --mdc-icon-size: 17px; color: var(--tx2); flex: 0 0 auto; }
       .opt.on { background: rgba(var(--m), .25); box-shadow: inset 0 0 0 1px rgba(var(--m), .55); }
@@ -2501,7 +2522,7 @@
 
       /* ---------- Versatile Thermostat et pastilles ---------- */
       .vb { display: flex; flex-wrap: wrap; gap: 5px; margin: 2px 0 6px; }
-      .pill { display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 9px; border-radius: 12px; font-size: 11.5px; font-weight: 600; white-space: nowrap; background: rgba(255,255,255,.06); box-shadow: inset 0 0 0 1px rgba(255,255,255,.07); color: var(--tx); max-width: 100%; box-sizing: border-box; }
+      .pill { display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 9px; border-radius: 12px; font-size: 11.5px; font-weight: 600; white-space: nowrap; background: rgba(var(--ov),.06); box-shadow: inset 0 0 0 1px rgba(var(--ov),.07); color: var(--tx); max-width: 100%; box-sizing: border-box; }
       .pill > span { overflow: hidden; text-overflow: ellipsis; }
       .pill ha-icon { --mdc-icon-size: 14px; flex: 0 0 auto; }
       .pill.dim { padding: 0 6px; color: var(--tx2); }
@@ -2513,21 +2534,21 @@
       .pill.bad { background: rgba(239,83,80,.18); box-shadow: inset 0 0 0 1px rgba(239,83,80,.5); animation: pbad 2.4s ease-in-out infinite; }
       .pill.bad ha-icon { color: rgb(255,120,115); }
       @keyframes pbad { 50% { box-shadow: inset 0 0 0 1px rgba(239,83,80,.85), 0 0 10px -2px rgba(239,83,80,.6); } }
-      .pill button { margin-left: 3px; height: 18px; padding: 0 7px; border-radius: 9px; font-size: 10.5px; font-weight: 700; background: rgba(255,255,255,.14); }
-      .pill button:hover { background: rgba(255,255,255,.24); }
+      .pill button { margin-left: 3px; height: 18px; padding: 0 7px; border-radius: 9px; font-size: 10.5px; font-weight: 700; background: rgba(var(--ov),.14); }
+      .pill button:hover { background: rgba(var(--ov),.24); }
       button.pill { cursor: pointer; font: inherit; font-size: 11.5px; font-weight: 600; border: 0; }
-      button.pill:hover { background: rgba(255,255,255,.1); }
+      button.pill:hover { background: rgba(var(--ov),.1); }
       .vp { display: flex; flex-direction: column; gap: 5px; padding: 2px 2px 0; }
       .vpt { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 8px; font-size: 11.5px; color: var(--tx2); font-variant-numeric: tabular-nums; }
       .vpt span { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
       .vpt ha-icon { --mdc-icon-size: 14px; }
-      .vpb { height: 4px; border-radius: 2px; background: rgba(255,255,255,.08); overflow: hidden; }
+      .vpb { height: 4px; border-radius: 2px; background: rgba(var(--ov),.08); overflow: hidden; }
       .vpb i { display: block; height: 100%; border-radius: 2px; background: linear-gradient(90deg, rgba(255,140,60,.7), rgb(255,110,30)); transition: width .6s; }
       .tpa, .tpl, .tpr { grid-column: 1 / -1; }
       .tpa { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; padding: 8px 10px; border-radius: 12px; font-size: 12.5px; background: rgba(var(--m), .16); box-shadow: inset 0 0 0 1px rgba(var(--m), .35); }
       .tpa > span { flex: 1 1 auto; min-width: 0; }
       .tpa ha-icon { --mdc-icon-size: 18px; color: rgb(var(--m)); }
-      .tpc { height: 26px; padding: 0 10px; border-radius: 13px; font-size: 11.5px; font-weight: 700; background: rgba(255,255,255,.12); }
+      .tpc { height: 26px; padding: 0 10px; border-radius: 13px; font-size: 11.5px; font-weight: 700; background: rgba(var(--ov),.12); }
       .tpl { margin: 4px 2px 0; font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--tx2); }
       .tpr { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 5px; }
       ha-card[data-vt="alert"] { border-color: rgba(239,83,80,.55); }
@@ -2590,7 +2611,27 @@
         .chips[data-n="3"] .chip:last-child { grid-column: auto; }
         .chips[data-n="4"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .opts { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-      }`;
+      }
+      /* ---------- thème clair (#12) ---------- */
+      ha-card[data-theme="light"] {
+        --tx: #16202a; --tx2: rgba(22,32,42,.6); --ov: 15,23,42;
+        background: linear-gradient(160deg, rgba(255,255,255,.97), rgba(240,244,248,.98));
+        box-shadow: 0 6px 20px rgba(15,23,42,.10), inset 0 1px 0 rgba(255,255,255,.9);
+      }
+      ha-card[data-theme="light"].active { box-shadow: 0 8px 24px rgba(15,23,42,.12), 0 0 22px -6px rgba(var(--m), .45), inset 0 1px 0 rgba(255,255,255,.9); }
+      ha-card[data-theme="light"] .glow { opacity: .28; }
+      ha-card[data-theme="light"].active .glow { opacity: .55; }
+      ha-card[data-theme="light"][data-mode="off"] .glow { opacity: .6; }
+      ha-card[data-theme="light"][data-fx="none"] .fx i { background: radial-gradient(circle, rgba(100,116,139,.45), transparent 70%); }
+      ha-card[data-theme="light"].active[data-fx="cool"] .fx i { background: radial-gradient(circle, #9fd8ff, #5fb6f0 55%, transparent 72%); }
+      ha-card[data-theme="light"].active[data-fx="fan"] .fx i { background: linear-gradient(90deg, transparent, rgba(20,170,130,.6), transparent); }
+      ha-card[data-theme="light"] .cur { stroke: rgba(15,23,42,.35); }
+      ha-card[data-theme="light"][data-mode="off"] .target, ha-card[data-theme="light"][data-mode="off"] .ctgt { color: rgba(22,32,42,.42); }
+      ha-card[data-theme="light"] .modes, ha-card[data-theme="light"][data-layout="compact"] .cstep { background: rgba(15,23,42,.06); }
+      ha-card[data-theme="light"] .sheet { background: rgba(226,232,240,.55); }
+      ha-card[data-theme="light"] .sheet-in { background: rgba(255,255,255,.98); box-shadow: 0 -8px 24px rgba(15,23,42,.12); }
+      ha-card[data-theme="light"] .na { background: rgba(255,255,255,.8); }
+      `;
     }
   }
 
@@ -2623,6 +2664,7 @@
           },
           { name: "layout", selector: { select: { mode: "dropdown", options: [{ value: "full", label: tr("e_layout_full") }, { value: "compact", label: tr("e_layout_compact") }] } } },
           { name: "language", selector: { select: { mode: "dropdown", options: [{ value: "", label: tr("e_lang_auto") }, ...Object.entries(LANG_NAMES).map(([value, label]) => ({ value, label }))] } } },
+          { name: "theme", selector: { select: { mode: "dropdown", options: [{ value: "auto", label: tr("e_theme_auto") }, { value: "dark", label: tr("e_theme_dark") }, { value: "light", label: tr("e_theme_light") }] } } },
           {
             type: "grid", name: "", schema: [
               { name: "min_temp", selector: { number: { min: 5, max: 35, step: 0.5, mode: "box", unit_of_measurement: "°C" } } },
@@ -2654,6 +2696,8 @@
           for (const k of ["min_temp", "max_temp", "temperature_sensor", "name", "icon"]) if (v[k] === "" || v[k] == null) delete v[k];
           if (v.layout === "full") delete v.layout;
           if (!v.language) delete v.language;
+          if (!v.theme || v.theme === "auto") delete v.theme;
+          if (!Array.isArray(v.hidden_presets) || !v.hidden_presets.length) delete v.hidden_presets;
           if (Number(v.graph_hours) === 24) delete v.graph_hours;
           if (!v.lock) { delete v.lock; delete v.lock_delay; } else if (v.lock_delay == null || v.lock_delay === "" || Number(v.lock_delay) === 30) delete v.lock_delay;
           if (!v.vtherm) { delete v.vtherm; delete v.vtherm_info; delete v.vtherm_inhibition_bypass; delete v.vtherm_auto_start_stop; }
@@ -2671,7 +2715,8 @@
       const so = this._config.entity && this._hass.states[this._config.entity];
       const isVt = !!(so && HolmClimateCard.isVTherm(so.attributes)) || !!this._config.vtherm;
       const vtOn = isVt && !!this._config.vtherm;
-      const key = `${isVt}|${vtOn}`;
+      const presetList = (so && so.attributes.preset_modes) || [];
+      const key = `${isVt}|${vtOn}|${presetList.join(",")}`;
       if (this._isVt !== key) {
         this._isVt = key;
         const vtExtra = [
@@ -2681,10 +2726,13 @@
           { name: "vtherm_inhibition_bypass", selector: { entity: { domain: "switch" } } },
           { name: "vtherm_auto_start_stop", selector: { entity: { domain: "switch" } } },
         ];
-        this._form.schema = isVt ? [...this._base, { name: "vtherm", selector: { boolean: {} } }, ...(vtOn ? vtExtra : [])] : this._base;
+        // préréglages masqués (#10) : choix parmi ceux du thermostat
+        const presetField = presetList.length ? [{ name: "hidden_presets", selector: { select: { multiple: true, mode: "list", options: presetList.map((p) => ({ value: p, label: has("preset_" + p) ? tr("preset_" + p) : p })) } } }] : [];
+        const base = [...this._base, ...presetField];
+        this._form.schema = isVt ? [...base, { name: "vtherm", selector: { boolean: {} } }, ...(vtOn ? vtExtra : [])] : base;
       }
       this._form.hass = this._hass;
-      this._form.data = { show_fan: true, show_preset: true, show_swing: true, layout: "full", graph_hours: 24, lock_delay: 30, vtherm_info: ["heat", "power", "ext", "bar"], ...this._config };
+      this._form.data = { show_fan: true, show_preset: true, show_swing: true, layout: "full", theme: "auto", graph_hours: 24, lock_delay: 30, vtherm_info: ["heat", "power", "ext", "bar"], ...this._config };
     }
   }
 
@@ -2722,7 +2770,7 @@
       if (!R.some(([h]) => h === this._hours)) R.push([this._hours, this._hours % 24 === 0 ? tr("g_days", this._hours / 24) : tr("g_hours", this._hours)]);
       R.sort((a, b) => a[0] - b[0]);
       this.shadowRoot.innerHTML = `<style>${HolmClimateGraph.css()}</style>
-        <div class="bg"><div class="dlg" role="dialog" aria-label="${tr("history")}">
+        <div class="bg${this._o.light ? " light" : ""}"><div class="dlg" role="dialog" aria-label="${tr("history")}">
           <div class="hd"><div class="tt"><b>${this._esc(this._o.name)}</b><small>${tr("g_temp")}${this._o.sensor ? tr("g_sensor") : ""}</small></div>
             <div class="rg">${R.map(([h, l]) => `<button data-h="${h}" class="${h === this._hours ? "on" : ""}">${l}</button>`).join("")}</div>
             <button class="x" aria-label="${tr("close")}"><ha-icon icon="mdi:close"></ha-icon></button></div>
@@ -2878,6 +2926,16 @@
       .lg { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; font-size: 11.5px; color: rgba(220,235,240,.65); }
       .lg span { display: flex; align-items: center; gap: 5px; } .lg i { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
       .lt { background: #ff9a4a; } .lc { background: repeating-linear-gradient(90deg, #fff 0 4px, transparent 4px 7px); } .lh { height: 9px !important; background: rgba(255,110,30,.35); } .lk { height: 9px !important; background: rgba(64,170,255,.4); }
+      /* thème clair (#12) */
+      .bg.light { background: rgba(226,232,240,.6); }
+      .bg.light .dlg { color: #16202a; background: linear-gradient(160deg, rgba(255,255,255,.99), rgba(241,245,249,.99)); border-color: rgba(15,23,42,.08); box-shadow: 0 20px 60px rgba(15,23,42,.18); }
+      .bg.light .tt small, .bg.light .stats small, .bg.light .ld, .bg.light .tip small, .bg.light .lg { color: rgba(22,32,42,.6); }
+      .bg.light .rg { background: rgba(15,23,42,.06); } .bg.light .rg button { color: rgba(22,32,42,.7); } .bg.light .rg button.on { color: #fff; }
+      .bg.light .x, .bg.light .stats div { background: rgba(15,23,42,.05); }
+      .bg.light .gl { stroke: rgba(15,23,42,.08); } .bg.light .yl, .bg.light .xl { fill: rgba(22,32,42,.55); }
+      .bg.light .tg { stroke: rgba(15,23,42,.6); } .bg.light .hl { stroke: rgba(15,23,42,.3); }
+      .bg.light .tip { background: rgba(255,255,255,.97); box-shadow: 0 6px 18px rgba(15,23,42,.15); } .bg.light .tip span { color: rgba(22,32,42,.7); }
+      .bg.light .lc { background: repeating-linear-gradient(90deg, #475569 0 4px, transparent 4px 7px); }
       @media (max-width: 480px) { .bg { padding: 8px; align-items: flex-end; } .dlg { border-radius: 22px 22px 14px 14px; padding: 12px; } }`;
     }
   }
