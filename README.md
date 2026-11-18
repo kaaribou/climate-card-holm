@@ -46,7 +46,16 @@ HOLM Climate Card remplace la carte thermostat pour vos entités `climate` (clim
 |---|---|
 | ![Volet de choix](docs/images/choix.png) | ![Historique](docs/images/graphique.png) |
 
-### 🆕 Nouveautés de la 1.7.0
+### 🆕 Nouveautés de la 1.8.0
+
+- 🌡️ **La température mesurée en grand** ([#14](https://github.com/kaaribou/climate-card-holm/issues/14)) : nouvelle option `main_value: current`. Au centre de la roue, la température de la pièce en grand et la consigne en dessous (🎯). Pendant un réglage, la consigne repasse en grand quelques secondes. Voir [La valeur au centre de la roue](#la-valeur-au-centre-de-la-roue).
+- 🔁 **Mode à l'arrêt automatique** ([#13](https://github.com/kaaribou/climate-card-holm/issues/13), Versatile Thermostat) : à côté de la pastille auto-start/stop, une pastille « → Éteint », « → Ventil. »… montre le mode dans lequel le VTherm passe quand l'auto-start/stop l'arrête ; un toucher ouvre le choix.
+
+| Consigne (par défaut) et température mesurée au centre | Mode à l'arrêt automatique |
+|---|---|
+| ![La valeur au centre de la roue](docs/images/temperature-au-centre.png) | ![Mode à l'arrêt automatique](docs/images/arret-auto-mode.png) |
+
+### Nouveautés de la 1.7.0
 
 - 🌗 **Thème clair** ([#12](https://github.com/kaaribou/climate-card-holm/issues/12)) : la carte suit le mode clair ou sombre de Home Assistant (option `theme` : `auto`, `dark` ou `light`), fenêtres et graphique compris.
 - 🙈 **Préréglages masqués** ([#10](https://github.com/kaaribou/climate-card-holm/issues/10)) : option `hidden_presets`, par exemple `none` pour ne plus proposer le mode **Normal**. Si le thermostat y passe tout seul, la carte l'affiche quand même.
@@ -136,6 +145,7 @@ Dans un tableau de bord en sections, la carte prend par défaut une demi-largeur
 | `show_preset` | Puce **Préréglage** (boost, absence, éco…) | `true` |
 | `show_swing` | Puces **Oscillation** verticale et horizontale | `true` |
 | `layout` | `full` (avec la roue) ou `compact` (en largeur, sans la roue) | `full` |
+| `main_value` | Grande valeur au centre de la roue : `target` (consigne, la mesure en dessous) ou `current` (température mesurée, la consigne en dessous) | `target` |
 | `theme` | `auto` (suit le mode clair / sombre de Home Assistant), `dark` ou `light` | `auto` |
 | `hidden_presets` | Préréglages à ne plus proposer, ex. `[none]` pour masquer **Normal** | — |
 | `min_temp` / `max_temp` | Consigne minimum / maximum autorisée (dans les limites de l'appareil) | limites de l'appareil |
@@ -148,6 +158,7 @@ Dans un tableau de bord en sections, la carte prend par défaut une demi-largeur
 | `vtherm_info` | Informations sous les commandes : `heat` (taux de chauffe), `power` (puissance moyenne), `ext` (température extérieure), `bar` (barre de chauffe) | toutes |
 | `vtherm_inhibition_bypass` | Interrupteur de bypass de l'inhibition (fourni par votre plugin d'inhibition) | — |
 | `vtherm_auto_start_stop` | Interrupteur « Enable auto start/stop » du VTherm | trouvé automatiquement |
+| `vtherm_auto_start_stop_mode` | Liste « mode à l'arrêt » de l'auto-start/stop du VTherm (`select.…_auto_start_stop_…`) | trouvée automatiquement |
 
 ```yaml
 type: custom:holm-climate-card
@@ -168,6 +179,26 @@ max_temp: 24
 ```
 
 Un toucher sur la **température actuelle** ouvre l'historique : température (ou sonde), consigne en pointillés, périodes de chauffe et de clim, minimum / maximum / moyenne et durée de fonctionnement.
+
+### La valeur au centre de la roue
+
+Par défaut (`main_value: target`), le grand chiffre au centre est la **consigne** et la température mesurée est en petit en dessous (🏠 19,4°, un toucher ouvre l'historique).
+
+Avec `main_value: current` (éditeur : **Grande valeur au centre de la roue** → *Température mesurée*) :
+
+- le grand chiffre est la **température de la pièce**, sous l'intitulé « Température » ;
+- la consigne est en dessous, avec l'icône 🎯 (un toucher ouvre toujours l'historique) ;
+- **pendant un réglage**, en faisant glisser la roue ou avec + et −, la consigne repasse en grand pour voir la valeur choisie, puis la mesure revient 2 à 3 secondes après ;
+- le point sur la roue reste la température mesurée, la pastille ronde la consigne ;
+- en mode ventilation seule, ou si l'appareil n'a pas de consigne ou de mesure, la carte garde l'affichage habituel.
+
+La vue compacte affiche déjà les deux côte à côte : l'option ne la change pas.
+
+```yaml
+type: custom:holm-climate-card
+entity: climate.salon
+main_value: current
+```
 
 ### Verrouillage
 
@@ -211,6 +242,7 @@ vtherm: true
 | 🪟 **Fenêtre** | Pastille fenêtre : **un toucher active ou désactive le bypass** de la détection d'ouverture (« Fenêtre ouverte » → « Fenêtre ignorée »). |
 | ⏸️ **Inhibition** | « Inhibé » quand un plugin d'inhibition suspend la commande des appareils. Si l'interrupteur de bypass est indiqué (`vtherm_inhibition_bypass`), un toucher sur la pastille active ou désactive le bypass. |
 | 🔁 **Auto-start/stop** | Pastille « Arrêt auto » quand le VTherm est arrêté par l'auto-start/stop ; un toucher active ou désactive la fonction. |
+| ➡️ **Mode à l'arrêt automatique** | Quand l'auto-start/stop est actif, la pastille voisine « → Éteint », « → Ventil. »… indique le mode dans lequel le VTherm passe à l'arrêt automatique (réglé dans VTherm : éteint par défaut, ou ventilation seule, ou un autre mode de l'appareil). Un toucher ouvre le volet de choix, avec le mode actuel en surbrillance ; elle passe en orange quand le VTherm est justement arrêté. La liste est trouvée automatiquement sur l'appareil du thermostat (`vtherm_auto_start_stop_mode` pour l'indiquer à la main) ; sans elle, rien ne s'affiche. |
 | 🏠 **Présence / mouvement** | « Absent » quand la consigne d'absence s'applique, mouvement détecté dans la pièce. |
 | ⚡ **Délestage** | Pastille rouge et bordure de la carte rouge quand le chauffage est délesté. |
 | 🛡️ **Sécurité** | Sonde muette : chauffe de sécurité, signalée en rouge. |

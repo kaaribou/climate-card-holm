@@ -20,10 +20,18 @@
  * - Pastilles d'état configurables (badges) pour n'importe quel thermostat
  */
 (() => {
-  const VERSION = "1.7.0";
+  const VERSION = "1.8.0";
   // ---------- textes (fr = comportement d'origine, langue choisie d'après Home Assistant) ----------
   const I18N = {
     fr: {
+      room_temp: "Température",
+      ass_mode_t: "Mode à l'arrêt automatique : {0}. Toucher pour changer",
+      ass_mode_title: "Mode quand l'auto-start/stop arrête",
+      e_vtherm_auto_start_stop_mode: "Liste « mode à l'arrêt » de l'auto-start/stop (automatique si vide)",
+      e_main_value: "Grande valeur au centre de la roue",
+      e_main_target: "Consigne (mesure en dessous)",
+      e_main_current: "Température mesurée (consigne en dessous)",
+      setpoint_t: "Consigne",
       e_language: "Langue", e_lang_auto: "Automatique (profil)",
       dec: ",",
       mode_off: "Éteint", mode_heat: "Chauffe", mode_cool: "Clim", mode_heat_cool: "Auto", mode_auto: "Auto", mode_dry: "Déshum.", mode_fan_only: "Ventil.",
@@ -97,6 +105,14 @@
       card_desc: "Clim/chauffage compacte et animée selon l'usage (éteint, chauffage, clim), lisible à 2 côte à côte sur mobile.",
     },
     de: {
+      room_temp: "Temperatur",
+      ass_mode_t: "Modus bei automatischem Stopp: {0}. Tippen zum Ändern",
+      ass_mode_title: "Modus, wenn Auto-Start/Stopp anhält",
+      e_vtherm_auto_start_stop_mode: "Auswahl „Modus beim Stopp“ von Auto-Start/Stopp (automatisch, wenn leer)",
+      e_main_value: "Großer Wert in der Mitte des Drehreglers",
+      e_main_target: "Sollwert (Messwert darunter)",
+      e_main_current: "Gemessene Temperatur (Sollwert darunter)",
+      setpoint_t: "Sollwert",
       e_language: "Sprache", e_lang_auto: "Automatisch (Profil)",
       dec: ",",
       mode_off: "Aus", mode_heat: "Heizen", mode_cool: "Kühlen", mode_heat_cool: "Auto", mode_auto: "Auto", mode_dry: "Entfeuchten", mode_fan_only: "Lüften",
@@ -170,6 +186,14 @@
       card_desc: "Kompakte, je nach Betrieb animierte Klima-/Heizungskarte (aus, heizen, kühlen), auch zu zweit nebeneinander auf dem Handy gut lesbar.",
     },
     en: {
+      room_temp: "Temperature",
+      ass_mode_t: "Mode on automatic stop: {0}. Tap to change",
+      ass_mode_title: "Mode when auto-start/stop stops",
+      e_vtherm_auto_start_stop_mode: "Auto-start/stop \"stop mode\" select (automatic if empty)",
+      e_main_value: "Big value in the centre of the dial",
+      e_main_target: "Setpoint (reading below)",
+      e_main_current: "Measured temperature (setpoint below)",
+      setpoint_t: "Setpoint",
       e_language: "Language", e_lang_auto: "Automatic (profile)",
       dec: ".",
       mode_off: "Off", mode_heat: "Heat", mode_cool: "Cool", mode_heat_cool: "Auto", mode_auto: "Auto", mode_dry: "Dry", mode_fan_only: "Fan",
@@ -243,6 +267,14 @@
       card_desc: "Compact climate/heating card that animates with what the device is doing (off, heating, cooling), readable two side by side on mobile.",
     },
     es: {
+      room_temp: "Temperatura",
+      ass_mode_t: "Modo en la parada automática: {0}. Tocar para cambiar",
+      ass_mode_title: "Modo cuando el auto-start/stop para",
+      e_vtherm_auto_start_stop_mode: "Lista «modo en la parada» del auto-start/stop (automático si está vacío)",
+      e_main_value: "Valor grande en el centro de la rueda",
+      e_main_target: "Consigna (medida debajo)",
+      e_main_current: "Temperatura medida (consigna debajo)",
+      setpoint_t: "Consigna",
       dec: ",",
       mode_off: "Apagado",
       mode_heat: "Calor",
@@ -441,6 +473,14 @@
       e_lang_auto: "Automático (perfil)",
     },
     it: {
+      room_temp: "Temperatura",
+      ass_mode_t: "Modalità all'arresto automatico: {0}. Tocca per cambiare",
+      ass_mode_title: "Modalità quando l'auto-start/stop si ferma",
+      e_vtherm_auto_start_stop_mode: "Elenco «modalità all'arresto» dell'auto-start/stop (automatico se vuoto)",
+      e_main_value: "Valore grande al centro della ghiera",
+      e_main_target: "Setpoint (misura sotto)",
+      e_main_current: "Temperatura misurata (setpoint sotto)",
+      setpoint_t: "Setpoint",
       dec: ",",
       mode_off: "Spento",
       mode_heat: "Caldo",
@@ -639,6 +679,14 @@
       e_lang_auto: "Automatica (profilo)",
     },
     nl: {
+      room_temp: "Temperatuur",
+      ass_mode_t: "Modus bij automatische stop: {0}. Tik om te wijzigen",
+      ass_mode_title: "Modus wanneer auto-start/stop stopt",
+      e_vtherm_auto_start_stop_mode: "Keuzelijst „stopmodus” van auto-start/stop (automatisch indien leeg)",
+      e_main_value: "Grote waarde in het midden van de draaiknop",
+      e_main_target: "Instelwaarde (meting eronder)",
+      e_main_current: "Gemeten temperatuur (instelwaarde eronder)",
+      setpoint_t: "Instelwaarde",
       dec: ",",
       mode_off: "Uit",
       mode_heat: "Warmte",
@@ -837,6 +885,14 @@
       e_lang_auto: "Automatisch (profiel)",
     },
     pt: {
+      room_temp: "Temperatura",
+      ass_mode_t: "Modo na paragem automática: {0}. Tocar para mudar",
+      ass_mode_title: "Modo quando o auto-start/stop para",
+      e_vtherm_auto_start_stop_mode: "Lista «modo na paragem» do auto-start/stop (automático se vazio)",
+      e_main_value: "Valor grande no centro da roda",
+      e_main_target: "Temperatura definida (medida por baixo)",
+      e_main_current: "Temperatura medida (definida por baixo)",
+      setpoint_t: "Temperatura definida",
       dec: ",",
       mode_off: "Desligado",
       mode_heat: "Calor",
@@ -1035,6 +1091,14 @@
       e_lang_auto: "Automático (perfil)",
     },
     pl: {
+      room_temp: "Temperatura",
+      ass_mode_t: "Tryb przy automatycznym zatrzymaniu: {0}. Dotknij, aby zmienić",
+      ass_mode_title: "Tryb, gdy auto-start/stop zatrzymuje",
+      e_vtherm_auto_start_stop_mode: "Lista „tryb po zatrzymaniu” auto-start/stop (automatycznie, jeśli puste)",
+      e_main_value: "Duża wartość na środku pokrętła",
+      e_main_target: "Temperatura zadana (pomiar poniżej)",
+      e_main_current: "Zmierzona temperatura (zadana poniżej)",
+      setpoint_t: "Temperatura zadana",
       dec: ",",
       mode_off: "Wył.",
       mode_heat: "Grzanie",
@@ -1588,6 +1652,8 @@
         } else if (b.dataset.act === "ass-on" || b.dataset.act === "ass-off") {
           const sw = this._assSwitch(), on = b.dataset.act === "ass-on";
           if (sw) { this._assOpt = { on, ts: Date.now() }; this._hass.callService("switch", on ? "turn_on" : "turn_off", { entity_id: sw }); this._render(); }
+        } else if (b.dataset.act === "ass-mode") {
+          this._sheet = "assmode"; this._renderSheet();
         } else if (b.dataset.ent) {
           this.dispatchEvent(new CustomEvent("hass-more-info", { detail: { entityId: b.dataset.ent }, bubbles: true, composed: true }));
         }
@@ -1625,6 +1691,7 @@
         e.preventDefault();
         this._drag = { t: this._target() };
         this._card.classList.add("dragging");
+        if (this._card.classList.contains("swapped")) { const c = this._curTemp(); this.$("curt").textContent = c != null ? `${fmt(c, 0.1)}°` : "–"; this._swapCenter(this._drag.t, c); }
         dial.setPointerCapture && dial.setPointerCapture(e.pointerId);
         onMove(e);
       });
@@ -1770,6 +1837,22 @@
       const r = Object.values(reg).find((e) => e.device_id === me.device_id && e.entity_id.startsWith("switch.") && /auto_start_stop/.test(e.entity_id));
       return r ? r.entity_id : null;
     }
+    // liste « mode à l'arrêt » de l'auto-start/stop (#13) : off, fan_only… choisi par l'utilisateur dans VTherm
+    _assModeSel() {
+      if (this._config.vtherm_auto_start_stop_mode) return this._config.vtherm_auto_start_stop_mode;
+      const h = this._hass, reg = h && h.entities, me = reg && reg[this._config.entity];
+      if (!me || !me.device_id) return null;
+      const r = Object.values(reg).find((e) => e.device_id === me.device_id && e.entity_id.startsWith("select.") && /auto_start_stop/.test(e.entity_id));
+      return r ? r.entity_id : null;
+    }
+    _assModeLbl(o) {
+      const k = String(o || "").toLowerCase().replace(/^hvac_/, "");
+      if (MODE_META[k]) return modeLabel(k);
+      const st = this._hass && this._hass.states[this._assModeSel()];
+      try { if (st && this._hass.formatEntityState) return this._hass.formatEntityState(st, o); } catch (e) { /* ancienne version de HA */ }
+      return String(o);
+    }
+    _assModeIcon(o) { const k = String(o || "").toLowerCase().replace(/^hvac_/, ""); return (MODE_META[k] && MODE_META[k].icon) || "mdi:power"; }
     // interrupteur de bypass de l'inhibition (fourni par le plugin d'inhibition, à choisir dans l'éditeur)
     _inhSwitch() { return this._config.vtherm_inhibition_bypass || null; }
     // raison normalisée : clé connue (window, ass…) ou valeur brute
@@ -1836,6 +1919,10 @@
     }
     _commitTemp(t, delay) {
       this._pendingT = t;
+      if (this._config.main_value === "current") {   // consigne en grand le temps du réglage (#14)
+        this._adjUntil = Date.now() + 2500;
+        clearTimeout(this._adjTimer); this._adjTimer = setTimeout(() => this._so && this._render(), 2600);
+      }
       this._set("temperature", t);
       this._render();
       clearTimeout(this._tTimer);
@@ -1910,6 +1997,7 @@
       const cur = this._curTemp();
       $("curt").textContent = cur != null ? `${fmt(cur, 0.1)}°` : "–";
       $("hcurt").textContent = cur != null ? `${fmt(cur, 0.1)}°` : "–";
+      this._swapCenter(t, cur);
       if (cur != null) {
         const p = polar(START + this._frac(Number(cur)) * SWEEP);
         $("cur").setAttribute("cx", p.x.toFixed(1));
@@ -1952,6 +2040,12 @@
           const title = vt.assStopped ? tr("p_ass_stopped_t") : on ? tr("p_ass_on_t") : tr("p_ass_off_t");
           out.push(sw ? act(cls, on ? "mdi:power-cycle" : "mdi:sync-off", label, tr(on ? "p_tap_off" : "p_tap_on", title), on ? "ass-off" : "ass-on")
             : pill(cls, on ? "mdi:power-cycle" : "mdi:sync-off", label, title));
+          // mode utilisé à l'arrêt automatique (#13) : visible quand la fonction est active
+          const ms = this._assModeSel(), mst = ms && this._hass.states[ms];
+          if (on && mst && Array.isArray(mst.attributes.options) && mst.attributes.options.length) {
+            const v = this._assModeOpt && Date.now() - this._assModeOpt.ts < OPTIMISTIC_TTL ? this._assModeOpt.v : mst.state;
+            out.push(act(vt.assStopped ? "warn" : "dim", this._assModeIcon(v), "→ " + this._assModeLbl(v), tr("ass_mode_t", this._assModeLbl(v)), "ass-mode"));
+          }
         }
         if (vt.presCfg) out.push(vt.present ? pill("ok", "mdi:home-account", "", tr("p_present_t")) : pill("warn", "mdi:home-export-outline", tr("p_away"), tr("p_away_t")));
         if (vt.motCfg) out.push(vt.motion ? pill("ok", "mdi:motion-sensor", tr("p_motion"), tr("p_motion_t")) : pill("dim", "mdi:motion-sensor-off", "", tr("p_no_motion_t")));
@@ -2000,6 +2094,22 @@
       }
       const c = this._so && this._so.attributes.current_temperature;
       return c == null || isNaN(Number(c)) ? null : Number(c);
+    }
+    // option main_value: current (#14) : la température mesurée en grand au centre, la consigne en dessous.
+    // Pendant un réglage (glisser, + / −), la consigne repasse en grand quelques secondes.
+    _swapCenter(t, cur) {
+      const $ = this.$, curb = $("curb"), ic = curb && curb.querySelector("ha-icon");
+      const want = this._config.main_value === "current" && !this._fanOnly() && t != null && cur != null && !this._drag && !(this._adjUntil > Date.now());
+      this._card.classList.toggle("swapped", want);
+      if (ic) ic.setAttribute("icon", want ? "mdi:target" : "mdi:home-thermometer-outline");
+      if (curb) curb.title = want ? tr("setpoint_t") : tr("history");
+      if (!want) return;
+      const [ip, dp] = fmt(cur, 0.1).split(I18N[LANG].dec);
+      $("tgt").textContent = ip;
+      $("dec").textContent = dp != null ? I18N[LANG].dec + dp : "";
+      $("lbl").textContent = this._val("state") === "off" ? modeLabel("off") : tr("room_temp");
+      const { step } = this._range();
+      $("curt").textContent = `${fmt(t, step)}°`;
     }
     _paintDial(t) {
       const $ = this.$;
@@ -2135,6 +2245,7 @@
         $("sheet-t").textContent = tr("why");
         return this._renderWhySheet($("opts"));
       }
+      if (this._sheet === "assmode") return this._renderAssModeSheet($("opts"));
       const d = (this._defs || []).find((x) => x.key === this._sheet);
       if (!d) return this._closeSheet();
       $("sheet-t").textContent = d.title;
@@ -2150,6 +2261,31 @@
         b.addEventListener("click", () => {
           this._set(d.attr, o);
           this._call(d.service, { [d.attr]: o });
+          this._closeSheet();
+          this._render();
+        });
+        box.appendChild(b);
+      });
+      this._card.classList.add("sheet-open");
+    }
+    // volet « mode quand l'auto-start/stop arrête » (#13) : les choix de la liste VTherm
+    _renderAssModeSheet(box) {
+      const sel = this._assModeSel(), st = sel && this._hass.states[sel];
+      if (!st || !Array.isArray(st.attributes.options)) return this._closeSheet();
+      this.$("sheet-t").textContent = tr("ass_mode_title");
+      const cur = this._assModeOpt && Date.now() - this._assModeOpt.ts < OPTIMISTIC_TTL ? this._assModeOpt.v : st.state;
+      const key = st.attributes.options.join("|") + "#" + cur;
+      if (box._ass === key && this._card.classList.contains("sheet-open")) return;
+      box._ass = key;
+      box.innerHTML = "";
+      box.dataset.n = st.attributes.options.length;
+      st.attributes.options.forEach((o) => {
+        const b = document.createElement("button");
+        b.className = "opt" + (o === cur ? " on" : "");
+        b.innerHTML = `<ha-icon icon="${this._assModeIcon(o)}"></ha-icon><span>${this._assModeLbl(o)}</span>`;
+        b.addEventListener("click", () => {
+          this._assModeOpt = { v: o, ts: Date.now() };
+          this._hass.callService("select", "select_option", { entity_id: sel, option: o });
           this._closeSheet();
           this._render();
         });
@@ -2663,6 +2799,7 @@
             ],
           },
           { name: "layout", selector: { select: { mode: "dropdown", options: [{ value: "full", label: tr("e_layout_full") }, { value: "compact", label: tr("e_layout_compact") }] } } },
+          { name: "main_value", selector: { select: { mode: "dropdown", options: [{ value: "target", label: tr("e_main_target") }, { value: "current", label: tr("e_main_current") }] } } },
           { name: "language", selector: { select: { mode: "dropdown", options: [{ value: "", label: tr("e_lang_auto") }, ...Object.entries(LANG_NAMES).map(([value, label]) => ({ value, label }))] } } },
           { name: "theme", selector: { select: { mode: "dropdown", options: [{ value: "auto", label: tr("e_theme_auto") }, { value: "dark", label: tr("e_theme_dark") }, { value: "light", label: tr("e_theme_light") }] } } },
           {
@@ -2700,9 +2837,10 @@
           if (!Array.isArray(v.hidden_presets) || !v.hidden_presets.length) delete v.hidden_presets;
           if (Number(v.graph_hours) === 24) delete v.graph_hours;
           if (!v.lock) { delete v.lock; delete v.lock_delay; } else if (v.lock_delay == null || v.lock_delay === "" || Number(v.lock_delay) === 30) delete v.lock_delay;
-          if (!v.vtherm) { delete v.vtherm; delete v.vtherm_info; delete v.vtherm_inhibition_bypass; delete v.vtherm_auto_start_stop; }
+          if (!v.vtherm) { delete v.vtherm; delete v.vtherm_info; delete v.vtherm_inhibition_bypass; delete v.vtherm_auto_start_stop; delete v.vtherm_auto_start_stop_mode; }
           if (Array.isArray(v.vtherm_info) && ["heat", "power", "ext", "bar"].every((k) => v.vtherm_info.includes(k)) && v.vtherm_info.length === 4) delete v.vtherm_info;
-          for (const k of ["vtherm_inhibition_bypass", "vtherm_auto_start_stop"]) if (!v[k]) delete v[k];
+          for (const k of ["vtherm_inhibition_bypass", "vtherm_auto_start_stop", "vtherm_auto_start_stop_mode"]) if (!v[k]) delete v[k];
+          if (v.main_value !== "current") delete v.main_value;
           if (!Array.isArray(v.badges) || !v.badges.length) delete v.badges;
           this._config = v;
           this._self = true;
@@ -2725,6 +2863,7 @@
             { value: "ext", label: tr("e_info_ext") }, { value: "bar", label: tr("e_info_bar") }] } } },
           { name: "vtherm_inhibition_bypass", selector: { entity: { domain: "switch" } } },
           { name: "vtherm_auto_start_stop", selector: { entity: { domain: "switch" } } },
+          { name: "vtherm_auto_start_stop_mode", selector: { entity: { domain: "select" } } },
         ];
         // préréglages masqués (#10) : choix parmi ceux du thermostat
         const presetField = presetList.length ? [{ name: "hidden_presets", selector: { select: { multiple: true, mode: "list", options: presetList.map((p) => ({ value: p, label: has("preset_" + p) ? tr("preset_" + p) : p })) } } }] : [];
@@ -2732,7 +2871,7 @@
         this._form.schema = isVt ? [...base, { name: "vtherm", selector: { boolean: {} } }, ...(vtOn ? vtExtra : [])] : base;
       }
       this._form.hass = this._hass;
-      this._form.data = { show_fan: true, show_preset: true, show_swing: true, layout: "full", theme: "auto", graph_hours: 24, lock_delay: 30, vtherm_info: ["heat", "power", "ext", "bar"], ...this._config };
+      this._form.data = { show_fan: true, show_preset: true, show_swing: true, layout: "full", main_value: "target", theme: "auto", graph_hours: 24, lock_delay: 30, vtherm_info: ["heat", "power", "ext", "bar"], ...this._config };
     }
   }
 

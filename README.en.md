@@ -48,7 +48,18 @@ HOLM Climate Card replaces the thermostat card for your `climate` entities (air 
 |---|---|
 | ![Choice panel](docs/images/choix.png) | ![History](docs/images/graphique.png) |
 
-### 🆕 What's new in 1.7.0
+### 🆕 What's new in 1.8.0
+
+- 🌡️ **Measured temperature in large** ([#14](https://github.com/kaaribou/climate-card-holm/issues/14)): new option `main_value: current`. In the centre of the dial, the room temperature in large and the setpoint below (🎯). While adjusting, the setpoint becomes large again for a few seconds. See [The value in the centre of the dial](#the-value-in-the-centre-of-the-dial).
+- 🔁 **Mode on automatic stop** ([#13](https://github.com/kaaribou/climate-card-holm/issues/13), Versatile Thermostat): next to the auto-start/stop badge, a “→ Off”, “→ Fan”… badge shows the mode the VTherm switches to when auto-start/stop stops it; a tap opens the choice.
+
+| Setpoint (default) and measured temperature in the centre | Mode on automatic stop |
+|---|---|
+| ![The value in the centre of the dial](docs/images/temperature-au-centre.png) | ![Mode on automatic stop](docs/images/arret-auto-mode.png) |
+
+*(screenshots in French)*
+
+### What's new in 1.7.0
 
 - 🌗 **Light theme** ([#12](https://github.com/kaaribou/climate-card-holm/issues/12)): the card follows Home Assistant's light or dark mode (`theme` option: `auto`, `dark` or `light`), panels and graph included.
 - 🙈 **Hidden presets** ([#10](https://github.com/kaaribou/climate-card-holm/issues/10)): `hidden_presets` option, e.g. `none` to stop offering the **Normal** mode. If the thermostat switches to it by itself, the card still shows it.
@@ -138,6 +149,7 @@ In a sections dashboard, the card takes half the width by default: **two cards p
 | `show_preset` | **Preset** chip (boost, away, eco…) | `true` |
 | `show_swing` | Vertical and horizontal **Swing** chips | `true` |
 | `layout` | `full` (with the dial) or `compact` (wide, without the dial) | `full` |
+| `main_value` | Large value in the centre of the dial: `target` (setpoint, reading below) or `current` (measured temperature, setpoint below) | `target` |
 | `theme` | `auto` (follows Home Assistant's light / dark mode), `dark` or `light` | `auto` |
 | `hidden_presets` | Presets not to offer, e.g. `[none]` to hide **Normal** | — |
 | `min_temp` / `max_temp` | Minimum / maximum allowed setpoint (within the device's limits) | device limits |
@@ -150,6 +162,7 @@ In a sections dashboard, the card takes half the width by default: **two cards p
 | `vtherm_info` | Information below the controls: `heat` (heating rate), `power` (average power), `ext` (outdoor temperature), `bar` (heating bar) | all |
 | `vtherm_inhibition_bypass` | Inhibition bypass switch (provided by your inhibition plugin) | — |
 | `vtherm_auto_start_stop` | The VTherm's “Enable auto start/stop” switch | found automatically |
+| `vtherm_auto_start_stop_mode` | The VTherm's auto-start/stop “stop mode” select (`select.…_auto_start_stop_…`) | found automatically |
 
 ```yaml
 type: custom:holm-climate-card
@@ -170,6 +183,26 @@ max_temp: 24
 ```
 
 Tapping the **current temperature** opens the history: temperature (or sensor), dotted setpoint, heating and cooling periods, minimum / maximum / average and running time.
+
+### The value in the centre of the dial
+
+By default (`main_value: target`), the large number in the centre is the **setpoint** and the measured temperature is small below it (🏠 19.4°, a tap opens the history).
+
+With `main_value: current` (editor: **Big value in the centre of the dial** → *Measured temperature*):
+
+- the large number is the **room temperature**, under the “Temperature” label;
+- the setpoint is below, with the 🎯 icon (a tap still opens the history);
+- **while adjusting**, by dragging the dial or with + and −, the setpoint becomes large again so you see the value chosen, then the reading comes back 2 to 3 seconds later;
+- the dot on the dial stays the measured temperature, the round handle the setpoint;
+- in fan-only mode, or if the device has no setpoint or no reading, the card keeps the usual display.
+
+The compact view already shows both side by side: the option does not change it.
+
+```yaml
+type: custom:holm-climate-card
+entity: climate.living_room
+main_value: current
+```
 
 ### Locking
 
@@ -213,6 +246,7 @@ vtherm: true
 | 🪟 **Window** | Window badge: **a tap turns the open window detection bypass on or off** (“Window open” → “Window ignored”). |
 | ⏸️ **Inhibition** | “Inhibited” when an inhibition plugin suspends device control. If the bypass switch is set (`vtherm_inhibition_bypass`), tapping the badge turns the bypass on or off. |
 | 🔁 **Auto-start/stop** | “Auto stop” badge when the VTherm is stopped by auto-start/stop; a tap turns the feature on or off. |
+| ➡️ **Mode on automatic stop** | When auto-start/stop is on, the badge next to it (“→ Off”, “→ Fan”…) shows the mode the VTherm switches to on automatic stop (set in VTherm: off by default, or fan only, or another mode of the device). A tap opens the choice panel with the current mode highlighted; it turns orange while the VTherm is actually stopped. The select is found automatically on the thermostat's device (`vtherm_auto_start_stop_mode` to set it by hand); without it, nothing is shown. |
 | 🏠 **Presence / motion** | “Away” when the away setpoint applies, motion detected in the room. |
 | ⚡ **Load shedding** | Red badge and red card border when heating is shed. |
 | 🛡️ **Safety** | Silent sensor: safety heating, shown in red. |

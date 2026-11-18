@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.8.0
+- **Température mesurée au centre** ([#14](https://github.com/kaaribou/climate-card-holm/issues/14)) : nouvelle option `main_value` (`target` par défaut, ou `current`), aussi dans l'éditeur. En `current`, la température de la pièce est en grand au centre de la roue et la consigne en dessous (🎯) ; pendant un réglage (roue, + / −), la consigne repasse en grand quelques secondes.
+- **Mode à l'arrêt automatique** ([#13](https://github.com/kaaribou/climate-card-holm/issues/13), Versatile Thermostat) : quand l'auto-start/stop est actif, une pastille « → Éteint », « → Ventil. »… affiche le mode choisi dans la liste `select.…_auto_start_stop_…` du VTherm ; un toucher ouvre le volet de choix. Liste trouvée automatiquement sur l'appareil du thermostat, ou nouvelle option `vtherm_auto_start_stop_mode`.
+
 ## 1.7.0
 - **Thème clair** ([#12](https://github.com/kaaribou/climate-card-holm/issues/12)) : nouvelle option `theme` (`auto` par défaut, `dark`, `light`), aussi dans l'éditeur. En `auto`, la carte suit le mode clair ou sombre de Home Assistant ; volets, fenêtres et graphique de l'historique suivent aussi. Pour garder la carte toujours sombre : `theme: dark`.
 - **Préréglages masqués** ([#10](https://github.com/kaaribou/climate-card-holm/issues/10)) : nouvelle option `hidden_presets` (choix dans l'éditeur parmi les préréglages du thermostat), par exemple `none` pour ne plus proposer **Normal**. Un préréglage masqué reste affiché s'il est actif (le thermostat y est passé tout seul) ; il n'est plus proposé non plus dans le minuteur Versatile Thermostat.
