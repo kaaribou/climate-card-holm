@@ -48,7 +48,11 @@ HOLM Climate Card replaces the thermostat card for your `climate` entities (air 
 |---|---|
 | ![Choice panel](docs/images/choix.png) | ![History](docs/images/graphique.png) |
 
-### 🆕 What's new in 1.8.0
+### 🆕 What's new in 1.8.1
+
+- 🔒 **Security**: names and values coming from entities (badges, “Why this state?” sheet, fan, presets, swing, timed preset) are now escaped before being displayed. A name or attribute containing `<` or `"` is shown as is and can no longer run code.
+
+### What's new in 1.8.0
 
 - 🌡️ **Measured temperature in large** ([#14](https://github.com/kaaribou/climate-card-holm/issues/14)): new option `main_value: current`. In the centre of the dial, the room temperature in large and the setpoint below (🎯). While adjusting, the setpoint becomes large again for a few seconds. See [The value in the centre of the dial](#the-value-in-the-centre-of-the-dial).
 - 🔁 **Mode on automatic stop** ([#13](https://github.com/kaaribou/climate-card-holm/issues/13), Versatile Thermostat): next to the auto-start/stop badge, a “→ Off”, “→ Fan”… badge shows the mode the VTherm switches to when auto-start/stop stops it; a tap opens the choice.
@@ -111,10 +115,11 @@ HOLM Climate Card replaces the thermostat card for your `climate` entities (air 
 
 ### With HACS (recommended)
 
-1. HACS → ⋮ menu → **Custom repositories**.
-2. Add `https://github.com/kaaribou/climate-card-holm`, category **Dashboard** (*Plugin*).
-3. Search for **HOLM Climate Card** → **Download**.
-4. Reload the page (Ctrl + F5).
+1. Open **HACS** and search for **HOLM Climate Card**.
+2. Open the card → **Download**.
+3. Reload the page (Ctrl + F5).
+
+> If the card does not show up in the search yet: HACS → ⋮ menu → **Custom repositories**, add `https://github.com/kaaribou/climate-card-holm`, category **Dashboard** (*Plugin*), then start again at step 1.
 
 ### Manually
 

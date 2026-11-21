@@ -20,7 +20,9 @@
  * - Pastilles d'état configurables (badges) pour n'importe quel thermostat
  */
 (() => {
-  const VERSION = "1.8.0";
+  const VERSION = "1.8.1";
+  // Échappement HTML de toute valeur venant d'une entité, de ses attributs ou de la configuration avant insertion dans un gabarit.
+  const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
   // ---------- textes (fr = comportement d'origine, langue choisie d'après Home Assistant) ----------
   const I18N = {
     fr: {
@@ -2016,14 +2018,14 @@
       const box = this.$("vb");
       const out = [];
       const pill = (cls, icon, label, title, extra = "") =>
-        `<span class="pill ${cls}" title="${title || label || ""}"><ha-icon icon="${icon}"></ha-icon>${label ? `<span>${label}</span>` : ""}${extra}</span>`;
+        `<span class="pill ${cls}" title="${esc(title || label || "")}"><ha-icon icon="${esc(icon)}"></ha-icon>${label ? `<span>${esc(label)}</span>` : ""}${extra}</span>`;
       if (vt) {
         if (vt.safety) out.push(pill("bad", "mdi:shield-alert", tr("p_safety"), tr("p_safety_t")));
         if (vt.overpower) out.push(pill("bad", "mdi:flash-alert", tr("p_overpower"), tr("p_overpower_t")));
         if (vt.heatFail) out.push(pill("bad", "mdi:radiator-disabled", tr("p_fail"), tr("p_heat_fail_t")));
         if (vt.coolFail) out.push(pill("bad", "mdi:snowflake-alert", tr("p_fail"), tr("p_cool_fail_t")));
         // pastilles actives : un toucher sur l'icône agit sur Versatile Thermostat
-        const act = (cls, icon, label, title, a) => `<button class="pill ${cls}" data-act="${a}" title="${title}"><ha-icon icon="${icon}"></ha-icon>${label ? `<span>${label}</span>` : ""}</button>`;
+        const act = (cls, icon, label, title, a) => `<button class="pill ${cls}" data-act="${a}" title="${esc(title)}"><ha-icon icon="${esc(icon)}"></ha-icon>${label ? `<span>${esc(label)}</span>` : ""}</button>`;
         const inhSw = this._inhSwitch();
         if (vt.inhibited || vt.inhBypass) {
           if (vt.inhBypass) out.push(inhSw ? act("info", "mdi:debug-step-over", tr("p_inh_bypass"), tr("p_inh_bypass_tap"), "inh-off") : pill("info", "mdi:debug-step-over", tr("p_inh_bypass"), tr("p_inh_bypass_t")));
@@ -2062,7 +2064,7 @@
         const name = a.friendly_name || id;
         const numeric = st.state !== "" && !isNaN(Number(st.state));
         const label = numeric ? `${dec(Number(st.state))}${a.unit_of_measurement ? " " + a.unit_of_measurement : ""}` : on ? name : "";
-        out.push(`<button class="pill ${numeric ? "info" : on ? "warn" : "dim"}" data-ent="${id}" title="${name}"><ha-icon icon="${icon}"></ha-icon>${label ? `<span>${label}</span>` : ""}</button>`);
+        out.push(`<button class="pill ${numeric ? "info" : on ? "warn" : "dim"}" data-ent="${esc(id)}" title="${esc(name)}"><ha-icon icon="${esc(icon)}"></ha-icon>${label ? `<span>${esc(label)}</span>` : ""}</button>`);
       }
       const html = out.join("");
       if (box._html !== html) { box._html = html; box.innerHTML = html; }
@@ -2174,7 +2176,7 @@
           try { const f = this._hass.formatEntityState(this._so, m); if (f && f !== m) full = f; } catch (e) { /* ancienne version de Home Assistant */ }
         }
         b.title = full;
-        b.innerHTML = `<ha-icon icon="${mm.icon}"></ha-icon><span>${modeLabel(m)}</span>`;
+        b.innerHTML = `<ha-icon icon="${esc(mm.icon)}"></ha-icon><span>${esc(modeLabel(m))}</span>`;
         b.addEventListener("click", () => {
           if (m === this._val("state") || this._guard()) return;
           this._set("state", m);
@@ -2231,7 +2233,7 @@
         const b = document.createElement("button");
         b.className = "chip" + (d.hot ? " hot" : "") + (d.spin ? " fan" : "");
         b.title = d.title;
-        b.innerHTML = `<ha-icon icon="${d.icon}"></ha-icon><span>${d.label}</span>`;
+        b.innerHTML = `<ha-icon icon="${esc(d.icon)}"></ha-icon><span>${esc(d.label)}</span>`;
         b.addEventListener("click", () => { if (this._guard()) return; this._sheet = d.key; this._renderSheet(); });
         box.appendChild(b);
       });
@@ -2257,7 +2259,7 @@
         const m = metaOf(d.meta, o) || { icon: d.icon };
         const b = document.createElement("button");
         b.className = "opt" + (o === d.value ? " on" : "");
-        b.innerHTML = `<ha-icon icon="${m.icon}"></ha-icon><span>${this._lbl(d.attr, o)}</span>`;
+        b.innerHTML = `<ha-icon icon="${esc(m.icon)}"></ha-icon><span>${esc(this._lbl(d.attr, o))}</span>`;
         b.addEventListener("click", () => {
           this._set(d.attr, o);
           this._call(d.service, { [d.attr]: o });
@@ -2282,7 +2284,7 @@
       st.attributes.options.forEach((o) => {
         const b = document.createElement("button");
         b.className = "opt" + (o === cur ? " on" : "");
-        b.innerHTML = `<ha-icon icon="${this._assModeIcon(o)}"></ha-icon><span>${this._assModeLbl(o)}</span>`;
+        b.innerHTML = `<ha-icon icon="${esc(this._assModeIcon(o))}"></ha-icon><span>${esc(this._assModeLbl(o))}</span>`;
         b.addEventListener("click", () => {
           this._assModeOpt = { v: o, ts: Date.now() };
           this._hass.callService("select", "select_option", { entity_id: sel, option: o });
@@ -2327,7 +2329,7 @@
     _renderWhySheet(box) {
       const vt = this._vt(), list = this._whyList(vt);
       box.dataset.n = "why";
-      box.innerHTML = list.length ? list.map((m) => `<div class="why-r ${m.sev}"><ha-icon icon="${m.icon}"></ha-icon><div><b>${m.txt}</b>${m.sub ? `<small>${m.sub}</small>` : ""}</div></div>`).join("")
+      box.innerHTML = list.length ? list.map((m) => `<div class="why-r ${esc(m.sev)}"><ha-icon icon="${esc(m.icon)}"></ha-icon><div><b>${esc(m.txt)}</b>${m.sub ? `<small>${esc(m.sub)}</small>` : ""}</div></div>`).join("")
         : `<div class="why-r ok"><ha-icon icon="mdi:check-circle-outline"></ha-icon><div><b>${this._so.state === "off" ? modeLabel("off") : tr("w_none")}</b><small>${this._so.state === "off" ? tr("w_off_sub") : tr("w_ok_sub")}</small></div></div>`;
       this._card.classList.add("sheet-open");
     }
@@ -2336,12 +2338,12 @@
       const hidden = Array.isArray(this._config.hidden_presets) ? this._config.hidden_presets : [];
       const presets = (a.preset_modes || []).filter((p) => !["none", "power", "safety", "security"].includes(p) && !hidden.includes(p));
       if (!presets.includes(this._tpPreset)) this._tpPreset = presets.includes("boost") ? "boost" : presets.includes("comfort") ? "comfort" : presets[0];
-      const lab = (p) => this._lbl("preset_mode", p), ic = (p) => (metaOf(PRESET_META, p) || { icon: "mdi:star-outline" }).icon;
+      const lab = (p) => esc(this._lbl("preset_mode", p)), ic = (p) => esc((metaOf(PRESET_META, p) || { icon: "mdi:star-outline" }).icon);
       box.dataset.n = "timed";
       box.innerHTML = `
         ${vt.timed ? `<div class="tpa"><ha-icon icon="mdi:timer-sand"></ha-icon><span>${tr("tp_left", lab(vt.timed.preset), durTxt(vt.timed.remaining ?? 0))}${vt.timed.original ? tr("tp_then", lab(vt.timed.original)) : ""}</span><button class="tpc" data-cancel>${tr("tp_cancel")}</button></div>` : ""}
         <div class="tpl">${tr("preset")}</div>
-        <div class="tpr">${presets.map((p) => `<button class="opt${p === this._tpPreset ? " on" : ""}" data-p="${p}"><ha-icon icon="${ic(p)}"></ha-icon><span>${lab(p)}</span></button>`).join("")}</div>
+        <div class="tpr">${presets.map((p) => `<button class="opt${p === this._tpPreset ? " on" : ""}" data-p="${esc(p)}"><ha-icon icon="${ic(p)}"></ha-icon><span>${lab(p)}</span></button>`).join("")}</div>
         <div class="tpl">${tr("tp_for")}</div>
         <div class="tpr">${VT_DURATIONS.map(([m, l]) => `<button class="opt dur" data-m="${m}"><ha-icon icon="mdi:timer-outline"></ha-icon><span>${l}</span></button>`).join("")}</div>`;
       box.querySelectorAll("[data-p]").forEach((b) => b.addEventListener("click", () => { this._tpPreset = b.dataset.p; this._renderTimedSheet(box); }));
@@ -2926,7 +2928,7 @@
         this._load();
       }));
     }
-    _esc(v) { return String(v == null ? "" : v).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+    _esc(v) { return esc(v); }
     async _load() {
       const seq = (this._seq = (this._seq || 0) + 1);
       const end = new Date(), start = new Date(end - this._hours * 3600e3);

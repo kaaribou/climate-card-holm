@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.8.1
+- **Sécurité** : un helper d'échappement `esc` au niveau du module, utilisé par la carte et par le graphique (qui reprend l'ancien `_esc`, désormais aussi pour `'`). Sont échappés : pastilles (`friendly_name`, icône, valeur et unité des entités `badges`), pastilles VTherm, volet « Pourquoi cet état ? » (noms des entités `not_initialized_entities` / `unavailable_underlying_entities`, messages inconnus de `specific_states.messages`), puces et volets d'options (`fan_mode`, `preset_mode`, `swing_mode`, `swing_horizontal_mode`, liste du mode à l'arrêt automatique), boutons de mode et volet du préréglage minuté (`data-p` des `preset_modes`).
+- README : l'installation commence par la recherche directe dans HACS.
+
 ## 1.8.0
 - **Température mesurée au centre** ([#14](https://github.com/kaaribou/climate-card-holm/issues/14)) : nouvelle option `main_value` (`target` par défaut, ou `current`), aussi dans l'éditeur. En `current`, la température de la pièce est en grand au centre de la roue et la consigne en dessous (🎯) ; pendant un réglage (roue, + / −), la consigne repasse en grand quelques secondes.
 - **Mode à l'arrêt automatique** ([#13](https://github.com/kaaribou/climate-card-holm/issues/13), Versatile Thermostat) : quand l'auto-start/stop est actif, une pastille « → Éteint », « → Ventil. »… affiche le mode choisi dans la liste `select.…_auto_start_stop_…` du VTherm ; un toucher ouvre le volet de choix. Liste trouvée automatiquement sur l'appareil du thermostat, ou nouvelle option `vtherm_auto_start_stop_mode`.

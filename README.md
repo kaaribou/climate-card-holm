@@ -46,7 +46,11 @@ HOLM Climate Card remplace la carte thermostat pour vos entités `climate` (clim
 |---|---|
 | ![Volet de choix](docs/images/choix.png) | ![Historique](docs/images/graphique.png) |
 
-### 🆕 Nouveautés de la 1.8.0
+### 🆕 Nouveautés de la 1.8.1
+
+- 🔒 **Sécurité** : les noms et valeurs venant des entités (pastilles, volet « Pourquoi cet état ? », ventilation, préréglages, oscillation, préréglage minuté) sont maintenant échappés avant l'affichage. Un nom ou un attribut contenant `<` ou `"` s'affiche tel quel et ne peut plus exécuter de code.
+
+### Nouveautés de la 1.8.0
 
 - 🌡️ **La température mesurée en grand** ([#14](https://github.com/kaaribou/climate-card-holm/issues/14)) : nouvelle option `main_value: current`. Au centre de la roue, la température de la pièce en grand et la consigne en dessous (🎯). Pendant un réglage, la consigne repasse en grand quelques secondes. Voir [La valeur au centre de la roue](#la-valeur-au-centre-de-la-roue).
 - 🔁 **Mode à l'arrêt automatique** ([#13](https://github.com/kaaribou/climate-card-holm/issues/13), Versatile Thermostat) : à côté de la pastille auto-start/stop, une pastille « → Éteint », « → Ventil. »… montre le mode dans lequel le VTherm passe quand l'auto-start/stop l'arrête ; un toucher ouvre le choix.
@@ -107,10 +111,11 @@ HOLM Climate Card remplace la carte thermostat pour vos entités `climate` (clim
 
 ### Avec HACS (recommandé)
 
-1. HACS → menu ⋮ → **Dépôts personnalisés**.
-2. Ajoutez `https://github.com/kaaribou/climate-card-holm`, catégorie **Tableau de bord** (*Dashboard / Plugin*).
-3. Recherchez **HOLM Climate Card** → **Télécharger**.
-4. Rechargez la page (Ctrl + F5).
+1. Ouvrez **HACS** et recherchez **HOLM Climate Card**.
+2. Ouvrez la carte → **Télécharger**.
+3. Rechargez la page (Ctrl + F5).
+
+> Si la carte n'apparaît pas encore dans la recherche : HACS → menu ⋮ → **Dépôts personnalisés**, ajoutez `https://github.com/kaaribou/climate-card-holm`, catégorie **Tableau de bord** (*Dashboard / Plugin*), puis reprenez à l'étape 1.
 
 ### Manuellement
 
